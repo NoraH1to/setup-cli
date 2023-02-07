@@ -1,0 +1,67 @@
+{
+  "name": "@setup/cli",
+  "version": "1.0.0-alpha.0",
+  "description": "",
+  "type": "module",
+  "bin": {
+    "setup-cli": "dist/index.mjs"
+  },
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "prepare": "ts-patch install -s && git init && pnpm husky install",
+    "dev": "pnpm build -w",
+    "build": "rollup -c rollup.config.js",
+    "release": "standard-version"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@commitlint/cli": "^17.4.2",
+    "@commitlint/config-conventional": "^17.4.2",
+    "@rollup/plugin-eslint": "^9.0.2",
+    "@rollup/plugin-terser": "^0.3.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/fs-extra": "^11.0.1",
+    "@types/inquirer": "^9.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.48.1",
+    "@typescript-eslint/parser": "^5.48.1",
+    "commitizen": "^4.2.6",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.32.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.1.0",
+    "nanoid": "^4.0.0",
+    "normalize-path": "^3.0.0",
+    "prettier": "^2.8.3",
+    "rollup": "^3.10.0",
+    "rollup-plugin-delete": "^2.0.0",
+    "standard-version": "^9.5.0",
+    "ts-patch": "^2.1.0",
+    "tslib": "^2.4.1",
+    "typescript": "^4.9.4",
+    "typescript-transform-paths": "^3.4.6"
+  },
+  "dependencies": {
+    "commander": "^10.0.0",
+    "inquirer": "^9.1.4",
+    "inquirer-autocomplete-prompt": "^3.0.0",
+    "inquirer-checkbox-plus-prompt": "^1.4.2",
+    "ora": "^6.1.2",
+    "zx": "^7.1.1"
+  },
+  "engines": {
+    "node": ">= 16.0.0",
+    "npm": ">= 5.2.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  }
+}
