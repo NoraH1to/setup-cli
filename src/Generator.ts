@@ -142,11 +142,12 @@ export class Generator<N extends string = string> {
   private async output() {
     this.spinner.start('Copy Files');
     await fs.copy(this.tempPathname, this.target.pathname, { overwrite: true });
-    await this.clearTemp();
 
     this.spinner.start('Install dependencies');
+    const preCwd = process.cwd();
     await cd(this.target.pathname);
     await $`pnpm i`;
+    await cd(preCwd);
   }
 
   public async generate() {
@@ -158,11 +159,12 @@ export class Generator<N extends string = string> {
         `Done, ${chalk.bold.blueBright(`cd ${this.target.name}`)} then enjoy 🥰`,
       );
     } catch (e) {
-      await this.clearTemp();
       this.spinner.fail(
         chalk.redBright(this.spinner.text || 'Something error when generating'),
       );
       console.error(chalk.redBright((e as Error).stack));
+    } finally {
+      await this.clearTemp();
     }
   }
 }
