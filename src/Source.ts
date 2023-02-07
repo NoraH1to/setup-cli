@@ -15,6 +15,7 @@ export const REPOSITORY_TYPE = {
   GIT: 'git',
   LOCAL: 'local',
 } as const;
+export type REPOSITORY_TYPE = typeof REPOSITORY_TYPE;
 
 export interface SourceInfo<N extends string = string> {
   name: N;
@@ -79,7 +80,7 @@ interface InjectSource<N extends string = string> {
 export interface Repository {
   name: string;
   repository: string;
-  type: (typeof REPOSITORY_TYPE)[keyof typeof REPOSITORY_TYPE];
+  type: REPOSITORY_TYPE[keyof REPOSITORY_TYPE];
 }
 
 export class TemplateSource<N extends string = string>

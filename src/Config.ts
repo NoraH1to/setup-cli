@@ -19,45 +19,49 @@ class Config extends FileInfo {
     if (!this.jsonObj.repository)
       // TODO: 去除测试
       this.jsonObj.repository = {
-        default: {
-          name: 'default',
-          // type: 'git',
-          // repository: 'git@github.com:NoraH1to/setup-template-test.git',
+        'default-local': {
+          name: 'default-local',
           type: 'local',
           repository: normalizePath(
             path.resolve(__path_src_root, '../../template'),
           ),
         },
+        'default-remote': {
+          name: 'default-remote',
+          type: 'git',
+          repository: 'git@github.com:NoraH1to/setup-template-test.git',
+        },
       };
     this.save();
   }
 
-  public addSource(options: { name: string; source: Repository }) {
-    const { name } = options;
-    if (this.jsonObj[name]) throw new Error(`Source ${name} already exist`);
+  public addSource(options: { source: Repository }) {
+    const { name } = options.source;
+    if (this.jsonObj.repository[name])
+      throw new Error(`Source ${name} already exist`);
     else this.editSource(options);
     return this;
   }
 
-  public editSource(options: { name: string; source: Repository }) {
-    const { name, source } = options;
-    this.jsonObj[name] = {
-      ...source,
-      name,
+  public editSource(options: { source: Repository }) {
+    const { name } = options.source;
+    this.jsonObj.repository[name] = {
+      ...options.source,
     };
     return this;
   }
 
   public delSource(options: { name: string }) {
-    delete this.jsonObj[options.name];
+    delete this.jsonObj.repository[options.name];
+    return this;
   }
 
   public getSource() {
     return this.jsonObj.repository;
   }
 
-  public async save() {
-    await fs.writeFile(this.pathname, YAML.stringify(this.jsonObj));
+  public save() {
+    fs.writeFileSync(this.pathname, YAML.stringify(this.jsonObj));
   }
 }
 
