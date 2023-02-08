@@ -4,13 +4,13 @@ import { Generator } from '@/Generator';
 
 const create = async () => {
   const { project, base, inject } = await getCreateOptions();
-  const generator = await Generator.build(
-    new GeneratorSource({
+  const generator = await Generator.build({
+    source: new GeneratorSource({
       baseSource: base,
       injectSourceList: inject,
     }),
-    project,
-  );
+    target: project,
+  });
   await generator.generate();
 };
 

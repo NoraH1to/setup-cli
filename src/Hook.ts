@@ -1,12 +1,36 @@
 import 'zx/globals';
 
+import * as zx from 'zx';
+import inquirer from 'inquirer';
+import normalizePath from 'normalize-path';
+import ora from 'ora';
 import url from 'url';
 
 import type { FileInfo } from './File';
+import type { SourceInfo } from './Source';
+import type { AsyncOrCommon } from './utils';
 
+export type HookHelpers = typeof zx & {
+  inquirer: typeof inquirer;
+  normalizePath: typeof normalizePath;
+  ora: typeof ora;
+};
+
+export interface HookBase<P extends unknown[] = unknown[], R = unknown> {
+  (...args: P): AsyncOrCommon<R>;
+}
 export interface Hooks {
-  onMerge: (options: { src: FileInfo; dest: FileInfo }) => string;
-  [key: string]: (...unknown) => unknown;
+  onMerge: HookBase<
+    [
+      options: {
+        src: FileInfo;
+        dest: FileInfo;
+      },
+    ],
+    string
+  >;
+  beforeGenerate?: HookBase;
+  afterGenerate?: HookBase;
 }
 
 interface HookConstructorOptions {
@@ -15,9 +39,11 @@ interface HookConstructorOptions {
 }
 
 interface HookBuildOptions {
-  name: string;
-  pathname: string;
+  source: SourceInfo;
+  hookHelper: HookHelper;
 }
+
+export type InjectHook = (options: { hookHelper: HookHelper }) => Hooks;
 
 export class Hook {
   public static readonly defaultHookMap: Hooks = {
@@ -30,20 +56,29 @@ export class Hook {
 
   public readonly hookMap: Hooks = { ...Hook.defaultHookMap };
 
-  public static async build({ pathname, name }: HookBuildOptions) {
+  public static async build({ source, hookHelper }: HookBuildOptions) {
     let targetHooks;
     try {
-      targetHooks =
-        (
-          await import(
-            url.pathToFileURL(path.resolve(pathname, 'hook/index.js')).toString()
-          )
-        )?.default?.() ?? {};
+      const module = (
+        await import(
+          url
+            .pathToFileURL(path.resolve(source.pathname, 'hook/index.js'))
+            .toString()
+        )
+      )?.default as InjectHook;
+      targetHooks = module?.({ hookHelper }) ?? {};
     } catch (e) {
       targetHooks = {};
     }
     const hooks = { ...Hook.defaultHookMap, ...targetHooks };
-    return new Hook({ name, hooks });
+    return new Hook({ name: source.name, hooks });
+  }
+
+  public async callHook<N extends keyof Hooks>(
+    hookName: N,
+    ...args: Parameters<Hooks[N]>
+  ): Promise<ReturnType<Hooks[N]>> {
+    return await this.hookMap[hookName]?.apply(null, args);
   }
 
   /**
@@ -52,6 +87,23 @@ export class Hook {
   constructor({ name, hooks }: HookConstructorOptions) {
     this.name = name;
     this.hookMap = { ...this.hookMap, ...hooks };
-    Object.freeze(this.hookMap);
+  }
+}
+
+export class HookHelper {
+  public readonly helpers: HookHelpers;
+  public readonly env: {
+    __path_project_root__: string;
+  };
+  constructor(options: { target: SourceInfo }) {
+    this.helpers = {
+      ...zx,
+      inquirer,
+      normalizePath,
+      ora: ora,
+    };
+    this.env = {
+      __path_project_root__: options.target.pathname,
+    };
   }
 }

@@ -23,3 +23,7 @@ program
   );
 
 program.parse();
+
+import type { Hooks as _Hooks } from './Hook';
+export type { InjectHook } from './Hook';
+export type Hooks = Partial<_Hooks>;

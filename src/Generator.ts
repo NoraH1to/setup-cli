@@ -5,7 +5,7 @@ import { nanoid } from 'nanoid';
 import { FileInfo } from './File';
 import { GeneratorSource } from './Source';
 import { useEnvVar } from './utils';
-import { Hook } from './Hook';
+import { Hook, HookHelper } from './Hook';
 
 import type { Ora } from 'ora';
 import type { SourceInfo } from './Source';
@@ -13,12 +13,12 @@ import type { Hooks } from './Hook';
 
 const { __path_cache_generator } = useEnvVar();
 
-export const copyFile = (options: {
+export const copyFile = async (options: {
   src: string;
   dest: string;
-  mergeFn: Hooks['onMerge'];
+  hook: Hook;
 }) => {
-  const { src, dest, mergeFn } = options;
+  const { src, dest, hook } = options;
   if (!fs.existsSync(dest)) {
     fs.copyFileSync(src, dest);
     return;
@@ -27,25 +27,25 @@ export const copyFile = (options: {
   const destFile = new FileInfo(path.join(dest, srcFile.filename));
   fs.writeFileSync(
     destFile.pathname,
-    mergeFn({ src: srcFile, dest: destFile }),
+    await hook.callHook('onMerge', { src: srcFile, dest: destFile }),
   );
 };
 
-export const copy = (options: {
+export const copy = async (options: {
   src: string;
   dest: string;
-  mergeFn: Hooks['onMerge'];
+  hook: Hook;
 }) => {
-  const { src, dest, mergeFn } = options;
+  const { src, dest, hook } = options;
   const filenameList = fs.readdirSync(src);
   fs.ensureDirSync(dest);
   for (const filename of filenameList) {
     const srcPath = path.join(src, filename);
     const destPath = path.join(dest, filename);
     const state = fs.lstatSync(srcPath);
-    if (state.isDirectory()) copy({ src: srcPath, dest: destPath, mergeFn });
+    if (state.isDirectory()) copy({ src: srcPath, dest: destPath, hook });
     // TODO: should i use less I/O and modify files at memory?
-    else copyFile({ src: srcPath, dest, mergeFn });
+    else await copyFile({ src: srcPath, dest, hook });
   }
 };
 
@@ -68,31 +68,41 @@ export class Generator<N extends string = string> {
   /**
    * @deprecated Use `Generator.build` instead
    */
-  constructor(source: GeneratorSource<N>, target: SourceInfo) {
+  constructor(options: { source: GeneratorSource<N>; target: SourceInfo }) {
+    const { source, target } = options;
     this.source = source;
     this.target = target;
     fs.ensureDirSync(this.tempPathname);
   }
 
-  public static async build<N extends string = string>(
-    source: GeneratorSource<N>,
-    target: SourceInfo,
-  ) {
-    const generator = new Generator(source, target);
+  public static async build<N extends string = string>(options: {
+    source: GeneratorSource<N>;
+    target: SourceInfo;
+  }) {
+    const { source, target } = options;
+
+    const generator = new Generator(options);
+    const hookHelper = new HookHelper({ target });
 
     // Hook
     generator.setBaseHook(
       await Hook.build({
-        pathname: source.getBasePathname(),
-        name: source.getBaseName(),
+        source: {
+          pathname: source.getBasePathname(),
+          name: source.getBaseName(),
+        },
+        hookHelper,
       }),
     );
     for (const injectSourceInfo of source.injectSourceList) {
       generator.setInjectHook(
         injectSourceInfo.name,
         await Hook.build({
-          pathname: injectSourceInfo.pathname,
-          name: injectSourceInfo.name,
+          source: {
+            pathname: injectSourceInfo.pathname,
+            name: injectSourceInfo.name,
+          },
+          hookHelper,
         }),
       );
     }
@@ -108,6 +118,16 @@ export class Generator<N extends string = string> {
     this.injectHookMap[key] = hook;
   }
 
+  private async callHooks<N extends keyof Hooks>(
+    hookName: N,
+    ...args: Parameters<Hooks[N]>
+  ) {
+    await this.baseHook.callHook(hookName, ...args);
+    for (const hook of Object.values<Hook>(this.injectHookMap)) {
+      await hook.callHook(hookName, ...args);
+    }
+  }
+
   private async generateBase() {
     if (!this.source.baseSource) return;
     this.spinner.start(
@@ -117,7 +137,7 @@ export class Generator<N extends string = string> {
     copy({
       src: this.source.getBaseFilesPathname(),
       dest: this.tempPathname,
-      mergeFn: this.baseHook.hookMap.onMerge,
+      hook: this.baseHook,
     });
   }
 
@@ -130,7 +150,7 @@ export class Generator<N extends string = string> {
       copy({
         src: this.source.getInjectFilesPathnameByName(injectSourceInfo.name),
         dest: this.tempPathname,
-        mergeFn: this.injectHookMap[injectSourceInfo.name].hookMap.onMerge,
+        hook: this.injectHookMap[injectSourceInfo.name],
       });
     }
   }
@@ -142,7 +162,9 @@ export class Generator<N extends string = string> {
   private async output() {
     this.spinner.start('Copy Files');
     await fs.copy(this.tempPathname, this.target.pathname, { overwrite: true });
+  }
 
+  private async installDeps() {
     this.spinner.start('Install dependencies');
     const preCwd = process.cwd();
     await cd(this.target.pathname);
@@ -152,11 +174,21 @@ export class Generator<N extends string = string> {
 
   public async generate() {
     try {
+      await this.callHooks('beforeGenerate');
+
       await this.generateBase();
       await this.generateInject();
       await this.output();
+
+      this.spinner.stop();
+      await this.callHooks('afterGenerate');
+
+      await this.installDeps();
+
       this.spinner.succeed(
-        `Done, ${chalk.bold.blueBright(`cd ${this.target.name}`)} then enjoy 🥰`,
+        `Done, ${chalk.bold.blueBright(
+          `cd ${this.target.name}`,
+        )} then enjoy 🥰`,
       );
     } catch (e) {
       this.spinner.fail(

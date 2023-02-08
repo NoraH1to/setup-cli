@@ -37,3 +37,9 @@ export const getNameByPathnameAndType = ({
   pathname: string;
   type: string;
 }) => new RegExp(`.*${type}-(.*)`).exec(pathname)?.[1];
+
+export type OmitFirst<T extends unknown[]> = T extends [unknown, ...infer R]
+  ? R
+  : never;
+
+export type AsyncOrCommon<T> = Promise<T> | T;
