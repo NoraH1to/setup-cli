@@ -1,0 +1,20 @@
+import _$ from './shell';
+import * as _ from './goods';
+export * from './goods';
+export { default as $ } from './shell';
+
+declare global {
+  const $: typeof _$;
+  const YAML: typeof _.YAML;
+  const chalk: typeof _.chalk;
+  const fs: typeof _.fs;
+  const path: typeof _.path;
+  const os: typeof _.os;
+  const globby: typeof _.globby;
+}
+
+const ex = { $: _$, ..._ };
+
+Object.assign(global, ex);
+
+export default ex;

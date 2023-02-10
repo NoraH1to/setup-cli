@@ -1,4 +1,4 @@
-import 'zx/globals';
+import '@/utils/helper';
 
 import ora from 'ora';
 import { nanoid } from 'nanoid';
@@ -167,9 +167,9 @@ export class Generator<N extends string = string> {
   private async installDeps() {
     this.spinner.start('Install dependencies');
     const preCwd = process.cwd();
-    await cd(this.target.pathname);
+    await $.cd(this.target.pathname);
     await $`pnpm i`;
-    await cd(preCwd);
+    await $.cd(preCwd);
   }
 
   public async generate() {

@@ -1,4 +1,4 @@
-import 'zx/globals';
+import '@/utils/helper';
 
 import inquirer from 'inquirer';
 import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';

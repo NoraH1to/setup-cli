@@ -1,4 +1,4 @@
-import 'zx/globals';
+import '@/utils/helper';
 
 // const getFileListByPathname = (
 //   pathname: string,

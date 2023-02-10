@@ -1,13 +1,12 @@
-import 'zx/globals';
+import '@/utils/helper';
 
 import ora from 'ora';
 
 import { ensureRepository } from '@/Source';
 import { getConfig } from '@/Config';
 
-$.verbose = false;
-
 const update = async () => {
+  $.verbose = true;
   const sp = ora('Update repository').start();
   try {
     for (const repo of Object.values(getConfig().getSource())) {

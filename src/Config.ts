@@ -1,31 +1,23 @@
-import 'zx/globals';
+import '@/utils/helper';
 
-import normalizePath from 'normalize-path';
 import { FileInfo } from './File';
 import { useEnvVar } from './utils';
 
 import type { Repository } from './Source';
 
-const { __path_cache, __path_src_root } = useEnvVar();
+const { __path_cache } = useEnvVar();
 
 const pathname = path.resolve(__path_cache, 'config.yml');
 
-class Config extends FileInfo {
+export class Config extends FileInfo {
   protected declare jsonObj: { repository?: { [key: string]: Repository } };
   constructor() {
     super(pathname);
     fs.ensureFileSync(this.pathname);
     if (!this.jsonObj) this.jsonObj = {};
     if (!this.jsonObj.repository)
-      // TODO: 去除测试
+      // TODO: replace test repo
       this.jsonObj.repository = {
-        'default-local': {
-          name: 'default-local',
-          type: 'local',
-          repository: normalizePath(
-            path.resolve(__path_src_root, '../../template'),
-          ),
-        },
         'default-remote': {
           name: 'default-remote',
           type: 'git',
@@ -58,6 +50,11 @@ class Config extends FileInfo {
 
   public getSource() {
     return this.jsonObj.repository;
+  }
+
+  public clear() {
+    this.jsonObj = {};
+    return this;
   }
 
   public save() {

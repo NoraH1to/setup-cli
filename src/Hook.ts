@@ -1,6 +1,6 @@
-import 'zx/globals';
+import '@/utils/helper';
 
-import * as zx from 'zx';
+import * as ex from '@/utils/helper';
 import inquirer from 'inquirer';
 import normalizePath from 'normalize-path';
 import ora from 'ora';
@@ -10,7 +10,7 @@ import type { FileInfo } from './File';
 import type { SourceInfo } from './Source';
 import type { AsyncOrCommon } from './utils';
 
-export type HookHelpers = typeof zx & {
+export type HookHelpers = typeof ex & {
   inquirer: typeof inquirer;
   normalizePath: typeof normalizePath;
   ora: typeof ora;
@@ -97,7 +97,7 @@ export class HookHelper {
   };
   constructor(options: { target: SourceInfo }) {
     this.helpers = {
-      ...zx,
+      ...ex,
       inquirer,
       normalizePath,
       ora: ora,

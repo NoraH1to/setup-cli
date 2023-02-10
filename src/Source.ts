@@ -1,4 +1,4 @@
-import 'zx/globals';
+import '@/utils/helper';
 
 import normalizePath from 'normalize-path';
 import { getNameByPathnameAndType, useEnvVar } from './utils';

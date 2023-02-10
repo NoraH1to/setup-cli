@@ -16,7 +16,8 @@
     "prepare": "ts-patch install -s && git init && pnpm husky install",
     "dev": "pnpm build -w",
     "build": "rollup -c rollup.config.js",
-    "release": "standard-version"
+    "release": "standard-version",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -45,15 +46,20 @@
     "ts-patch": "^2.1.0",
     "tslib": "^2.4.1",
     "typescript": "^4.9.4",
-    "typescript-transform-paths": "^3.4.6"
+    "typescript-transform-paths": "^3.4.6",
+    "vitest": "^0.28.4"
   },
   "dependencies": {
+    "chalk": "^5.2.0",
     "commander": "^10.0.0",
+    "execa": "^6.1.0",
+    "fs-extra": "^11.1.0",
+    "globby": "^13.1.3",
     "inquirer": "^9.1.4",
     "inquirer-autocomplete-prompt": "^3.0.0",
     "inquirer-checkbox-plus-prompt": "^1.4.2",
     "ora": "^6.1.2",
-    "zx": "^7.1.1"
+    "yaml": "^2.2.1"
   },
   "engines": {
     "node": ">= 16.0.0",
