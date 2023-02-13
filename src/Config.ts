@@ -9,21 +9,23 @@ const { __path_cache } = useEnvVar();
 
 const pathname = path.resolve(__path_cache, 'config.yml');
 
-export class Config extends FileInfo {
-  protected declare jsonObj: { repository?: { [key: string]: Repository } };
+// TODO: replace test repo
+const defaultRepo = {
+  'default-remote': {
+    name: 'default-remote',
+    type: 'git',
+    repository: 'git@github.com:NoraH1to/setup-template-test.git',
+  },
+} as const;
+
+export class Config extends FileInfo<{
+  repository: { [key: string]: Repository };
+}> {
   constructor() {
     super(pathname);
     fs.ensureFileSync(this.pathname);
-    if (!this.jsonObj) this.jsonObj = {};
-    if (!this.jsonObj.repository)
-      // TODO: replace test repo
-      this.jsonObj.repository = {
-        'default-remote': {
-          name: 'default-remote',
-          type: 'git',
-          repository: 'git@github.com:NoraH1to/setup-template-test.git',
-        },
-      };
+    if (!this.jsonObj) this.jsonObj = { repository: defaultRepo };
+    if (!this.jsonObj.repository) this.jsonObj.repository = defaultRepo;
     this.save();
   }
 
@@ -49,16 +51,18 @@ export class Config extends FileInfo {
   }
 
   public getSource() {
-    return this.jsonObj.repository;
+    return this.getJson().repository;
   }
 
   public clear() {
-    this.jsonObj = {};
+    this.jsonObj = {
+      repository: {},
+    };
     return this;
   }
 
   public save() {
-    fs.writeFileSync(this.pathname, YAML.stringify(this.jsonObj));
+    fs.writeFileSync(this.pathname, YAML.stringify(this.getJson()));
   }
 }
 
