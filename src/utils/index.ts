@@ -2,7 +2,10 @@ import '@/utils/helper';
 
 import { fileURLToPath } from 'url';
 
-const __path_src_root = path.dirname(fileURLToPath(import.meta.url));
+const __path_src_root = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../',
+);
 const __path_cache = path.resolve(
   __path_src_root,
   '../node_modules/.cache/@setup',
