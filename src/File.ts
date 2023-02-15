@@ -7,29 +7,41 @@ export class FileInfo<J extends JsonObj = JsonObj> {
   public readonly filename: string;
   public readonly pathname: string;
   public readonly ext: string;
+  public readonly exist: boolean;
   protected content: string;
   protected jsonObj: J;
 
   constructor(pathname: string) {
+    const p = path.parse(pathname);
+    if (p.root === '' || p.ext === '')
+      throw new Error(`Illegal pathname ${pathname}`);
     this.pathname = pathname;
-    this.dirname = path.dirname(pathname);
-    this.filename = path.basename(pathname);
-    this.ext = path.extname(this.filename);
+    this.dirname = p.dir;
+    this.filename = p.base;
+    this.ext = p.ext;
+    this.exist = fs.existsSync(this.pathname);
     this.loadContent();
   }
 
   private loadContent() {
     try {
-      if (fs.existsSync(this.pathname))
-        this.setContent(fs.readFileSync(this.pathname).toString());
+      if (this.exist) {
+        const s = fs.readFileSync(this.pathname).toString();
+        this.setContent(s === '' ? undefined : s);
+      }
     } catch (e) {
-      console.error(chalk.red(e));
+      console.error(chalk.red((e as Error).stack));
     }
   }
 
   private updateJson() {
-    if (this.ext === '.json') this.jsonObj = JSON.parse(this.content);
-    else if (this.ext === '.yml') this.jsonObj = YAML.parse(this.content);
+    try {
+      if (this.ext === '.json') this.jsonObj = JSON.parse(this.content);
+      else if (this.ext === '.yml') this.jsonObj = YAML.parse(this.content);
+    } catch (e) {
+      if (this.content !== undefined)
+        console.error(chalk.redBright((e as Error).stack));
+    }
   }
 
   public setContent(content: string) {

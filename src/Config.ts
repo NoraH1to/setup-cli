@@ -7,10 +7,10 @@ import type { Repository } from './Source';
 
 const { __path_cache } = useEnvVar();
 
-const pathname = path.resolve(__path_cache, 'config.yml');
+const configPathname = path.resolve(__path_cache, 'config.yml');
 
 // TODO: replace test repo
-const defaultRepo = {
+export const defaultRepo = {
   'default-remote': {
     name: 'default-remote',
     type: 'git',
@@ -21,12 +21,10 @@ const defaultRepo = {
 export class Config extends FileInfo<{
   repository: { [key: string]: Repository };
 }> {
-  constructor() {
+  constructor(pathname) {
     super(pathname);
-    fs.ensureFileSync(this.pathname);
     if (!this.jsonObj) this.jsonObj = { repository: defaultRepo };
     if (!this.jsonObj.repository) this.jsonObj.repository = defaultRepo;
-    this.save();
   }
 
   public addSource(options: { source: Repository }) {
@@ -62,8 +60,12 @@ export class Config extends FileInfo<{
   }
 
   public save() {
+    fs.ensureFileSync(this.pathname);
     fs.writeFileSync(this.pathname, YAML.stringify(this.getJson()));
   }
 }
 
-export const getConfig = () => new Config();
+let config: Config;
+
+export const getConfig = () =>
+  config ? config : (config = new Config(configPathname));

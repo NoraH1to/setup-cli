@@ -33,16 +33,19 @@ export const useEnvVarCurrent = (url: string) => {
   };
 };
 
-export const getNameByPathnameAndType = ({
-  pathname,
-  type,
-}: {
+export const getNameByPathnameAndType = (options: {
   pathname: string;
   type: string;
-}) => new RegExp(`.*${type}-(.*)`).exec(pathname)?.[1];
+}) => {
+  const { pathname, type } = options;
+  const res = new RegExp(`.*${type}-(.*)`).exec(pathname)?.[1];
+  return res === '' || res === undefined ? null : res;
+};
 
 export type OmitFirst<T extends unknown[]> = T extends [unknown, ...infer R]
   ? R
   : never;
 
 export type AsyncOrCommon<T> = Promise<T> | T;
+
+export type UnionValues<T> = T[keyof T];

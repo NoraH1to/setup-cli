@@ -1,7 +1,6 @@
 import _$ from './shell';
 import * as _ from './goods';
 export * from './goods';
-export { default as $ } from './shell';
 
 declare global {
   const $: typeof _$;

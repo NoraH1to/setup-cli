@@ -27,9 +27,9 @@ class Shell {
     }
 
     const promise = execaCommand(cmd, {
-      stdout: 'pipe',
+      stdout: this.store.verbose ? 'pipe' : 'ignore',
       stdin: 'inherit',
-      stderr: 'pipe',
+      stderr: this.store.verbose ? 'pipe' : 'ignore',
     });
 
     const { stderr, stdout } = promise;
@@ -52,9 +52,9 @@ const exec = new Proxy(
       const _target = key in Function.prototype ? target : defaultStore;
       return Reflect.get(_target, key);
     },
-    set(_, key, receiver) {
-      const target = key in Function.prototype ? _ : defaultStore;
-      Reflect.set(target, key, receiver);
+    set(target, key, receiver) {
+      const _target = key in Function.prototype ? target : defaultStore;
+      Reflect.set(_target, key, receiver);
       return true;
     },
   },

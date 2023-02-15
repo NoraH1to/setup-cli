@@ -2,6 +2,8 @@ import { getConfig } from '@/Config';
 import { getRepoOptions } from '@/qa';
 import Ora from 'ora';
 
+import type { UnionValues } from '@/utils';
+
 const sp = Ora();
 
 const addRepo = async () => {
@@ -46,7 +48,7 @@ export const OPT = {
   LIST: 'list',
 } as const;
 
-const repo = async (options: { opt: (typeof OPT)[keyof typeof OPT] }) => {
+const repo = async (options: { opt: UnionValues<typeof OPT> }) => {
   const { opt } = options;
   switch (opt) {
     case OPT.ADD:
