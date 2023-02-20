@@ -16,14 +16,13 @@ program
 program
   .command('repo')
   .addArgument(new Argument('[opt]').choices(Object.values(OPT)))
-  .option('-l, --list', 'List repository')
   .description('Manage repository')
-  .action((opt, options) =>
-    cmdRepo({ opt: opt ? opt : options.list ? 'list' : undefined }),
+  .action((opt) =>
+    cmdRepo({ opt }),
   );
 
 program.parse();
 
 import type { Hooks as _Hooks } from './Hook';
-export type { InjectHook } from './Hook';
+export type { InjectHook, BaseHook } from './Hook';
 export type Hooks = Partial<_Hooks>;

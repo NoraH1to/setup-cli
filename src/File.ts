@@ -13,7 +13,7 @@ export class FileInfo<J extends JsonObj = JsonObj> {
 
   constructor(pathname: string) {
     const p = path.parse(pathname);
-    if (p.root === '' || p.ext === '')
+    if (p.root === '')
       throw new Error(`Illegal pathname ${pathname}`);
     this.pathname = pathname;
     this.dirname = p.dir;

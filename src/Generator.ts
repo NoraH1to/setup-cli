@@ -13,6 +13,9 @@ import type { Hooks } from './Hook';
 
 const { __path_cache_generator } = useEnvVar();
 
+/**
+ * src write into dest
+ */
 export const copyFile = async (options: {
   src: string;
   dest: string;
@@ -27,7 +30,9 @@ export const copyFile = async (options: {
   const destFile = new FileInfo(path.join(dest, srcFile.filename));
   fs.writeFileSync(
     destFile.pathname,
-    await hook.callHook('onMerge', { src: srcFile, dest: destFile }),
+    hook.hasHook('onMerging')
+      ? await hook.callHook('onMerging', { src: srcFile, dest: destFile })
+      : srcFile.getContent(),
   );
 };
 
@@ -82,7 +87,10 @@ export class Generator<N extends string = string> {
     const { source, target } = options;
 
     const generator = new Generator(options);
-    const hookHelper = new HookHelper({ target });
+    const hookHelper = await HookHelper.build({
+      target,
+      base: source.baseSource,
+    });
 
     // Hook
     generator.setBaseHook(
@@ -174,14 +182,14 @@ export class Generator<N extends string = string> {
 
   public async generate() {
     try {
-      await this.callHooks('beforeGenerate');
+      await this.callHooks('beforeMerge');
 
       await this.generateBase();
       await this.generateInject();
       await this.output();
 
       this.spinner.stop();
-      await this.callHooks('afterGenerate');
+      await this.callHooks('afterMerge');
 
       await this.installDeps();
 

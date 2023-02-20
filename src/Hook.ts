@@ -1,13 +1,15 @@
 import '@/utils/helper';
 
-import * as ex from '@/utils/helper';
+import ex from '@/utils/helper';
 import inquirer from 'inquirer';
 import normalizePath from 'normalize-path';
 import ora from 'ora';
-import url from 'url';
+import { pathToFileURL } from 'url';
+import { PATHNAME } from './Source';
+import { hasKeys } from './utils';
 
 import type { FileInfo } from './File';
-import type { SourceInfo } from './Source';
+import type { SourceInfo, SOURCE_TYPE } from './Source';
 import type { AsyncOrCommon } from './utils';
 
 export type HookHelpers = typeof ex & {
@@ -20,7 +22,7 @@ export interface HookBase<P extends unknown[] = unknown[], R = unknown> {
   (...args: P): AsyncOrCommon<R>;
 }
 export interface Hooks {
-  onMerge: HookBase<
+  onMerging?: HookBase<
     [
       options: {
         src: FileInfo;
@@ -29,8 +31,8 @@ export interface Hooks {
     ],
     string
   >;
-  beforeGenerate?: HookBase;
-  afterGenerate?: HookBase;
+  beforeMerge?: HookBase;
+  afterMerge?: HookBase;
 }
 
 interface HookConstructorOptions {
@@ -43,59 +45,93 @@ interface HookBuildOptions {
   hookHelper: HookHelper;
 }
 
-export type InjectHook = (options: { hookHelper: HookHelper }) => Hooks;
+interface HookFn {
+  (options: { hookHelper: HookHelper }): Partial<Hooks>;
+}
+export type BaseHook = HookFn & {
+  meta: { __dir_src__: string; __pathname_entry__: string };
+};
+export type InjectHook = HookFn;
+
+type HookModule<T extends SOURCE_TYPE = 'inject'> = T extends 'inject'
+  ? InjectHook
+  : BaseHook;
 
 export class Hook {
-  public static readonly defaultHookMap: Hooks = {
-    onMerge: ({ src }) => {
-      return src.getContent();
-    },
-  };
+  public static readonly defaultHookMap: Hooks = {};
 
   public readonly name: string;
 
-  public readonly hookMap: Hooks = { ...Hook.defaultHookMap };
-
-  public static async build({ source, hookHelper }: HookBuildOptions) {
-    let targetHooks;
-    try {
-      const module = (
-        await import(
-          url
-            .pathToFileURL(path.resolve(source.pathname, 'hook/index.js'))
-            .toString()
-        )
-      )?.default as InjectHook;
-      targetHooks = module?.({ hookHelper }) ?? {};
-    } catch (e) {
-      targetHooks = {};
-    }
-    const hooks = { ...Hook.defaultHookMap, ...targetHooks };
-    return new Hook({ name: source.name, hooks });
-  }
-
-  public async callHook<N extends keyof Hooks>(
-    hookName: N,
-    ...args: Parameters<Hooks[N]>
-  ): Promise<ReturnType<Hooks[N]>> {
-    return await this.hookMap[hookName]?.apply(null, args);
-  }
+  private hookMap: Hooks;
 
   /**
    * @deprecated use `Hook.build` instead
    */
   constructor({ name, hooks }: HookConstructorOptions) {
     this.name = name;
-    this.hookMap = { ...this.hookMap, ...hooks };
+    this.hookMap = { ...Hook.defaultHookMap, ...hooks };
+  }
+
+  public static async getHookModelByPathname<T extends SOURCE_TYPE = 'inject'>(
+    pathname: string,
+  ) {
+    return (
+      await import(
+        pathToFileURL(
+          path.resolve(pathname, `${PATHNAME.HOOK}/index.js`),
+        ).toString()
+      )
+    )?.default as HookModule<T>;
+  }
+
+  public static async build({ source, hookHelper }: HookBuildOptions) {
+    let targetHooks: Hooks = {};
+    let module;
+    if (
+      fs.existsSync(path.resolve(source.pathname, `${PATHNAME.HOOK}/index.js`))
+    ) {
+      try {
+        module = await Hook.getHookModelByPathname(source.pathname);
+      } catch {
+        console.error(
+          chalk.yellow(
+            `Fail to load hooks from "${this.name}" at ${source.pathname}`,
+          ),
+        );
+        targetHooks = {};
+      }
+      targetHooks = module?.({ hookHelper }) ?? {};
+    }
+    return new Hook({ name: source.name, hooks: targetHooks });
+  }
+
+  public async callHook<N extends keyof Hooks>(
+    hookName: N,
+    ...args: Parameters<Hooks[N]>
+  ): Promise<ReturnType<Hooks[N]>> {
+    if (this.hasHook(hookName))
+      return await this.hookMap[hookName].apply?.(null, args);
+    else return undefined;
+  }
+
+  public hasHook(hookName: keyof Hooks) {
+    return !!(
+      this.hookMap[hookName] && typeof this.hookMap[hookName] === 'function'
+    );
+  }
+
+  public getHookMap() {
+    return this.hookMap;
   }
 }
 
 export class HookHelper {
   public readonly helpers: HookHelpers;
   public readonly env: {
-    __path_project_root__: string;
-  };
-  constructor(options: { target: SourceInfo }) {
+    __dir_target_root__: string;
+  } & BaseHook['meta'];
+  constructor(options: { target: SourceInfo; baseMeta: BaseHook['meta'] }) {
+    const { target, baseMeta } = options;
     this.helpers = {
       ...ex,
       inquirer,
@@ -103,7 +139,30 @@ export class HookHelper {
       ora: ora,
     };
     this.env = {
-      __path_project_root__: options.target.pathname,
+      __dir_target_root__: target.pathname,
+      ...baseMeta,
     };
+  }
+
+  public static async build(options: { target: SourceInfo; base: SourceInfo }) {
+    const { target, base } = options;
+
+    const meta = (await Hook.getHookModelByPathname<'base'>(base.pathname))
+      ?.meta;
+
+    if (!meta) throw new Error(`Base template is missing "meta"`);
+
+    hasKeys({
+      target: meta,
+      keys: ['__dir_src__', '__pathname_entry__'],
+      onHasNot(_, key) {
+        throw new Error(`Base template is missing the "${key}" key in meta`);
+      },
+    });
+
+    return new HookHelper({
+      target,
+      baseMeta: meta,
+    });
   }
 }

@@ -60,7 +60,7 @@ export const getCreateOptions = async (): Promise<CreateOptions> => {
 
 export interface RepoOptions {
   name: string;
-  type: REPOSITORY_TYPE[keyof REPOSITORY_TYPE];
+  type: REPOSITORY_TYPE;
   repository: string;
 }
 

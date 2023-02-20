@@ -4,18 +4,27 @@ import normalizePath from 'normalize-path';
 import { getNameByPathnameAndType, useEnvVar } from './utils';
 import { getConfig } from './Config';
 
+import type { UnionValues } from './utils';
+
 const { __path_cache_git } = useEnvVar();
 
-const PATHNAME = {
+export const PATHNAME = {
   FILES: 'files',
   HOOK: 'hook',
 } as const;
+export type PATHNAME = UnionValues<typeof PATHNAME>;
 
 export const REPOSITORY_TYPE = {
   GIT: 'git',
   LOCAL: 'local',
 } as const;
-export type REPOSITORY_TYPE = typeof REPOSITORY_TYPE;
+export type REPOSITORY_TYPE = UnionValues<typeof REPOSITORY_TYPE>;
+
+export const SOURCE_TYPE = {
+  BASE: 'base',
+  INJECT: 'inject',
+} as const;
+export type SOURCE_TYPE = UnionValues<typeof SOURCE_TYPE>;
 
 export interface SourceInfo<N extends string = string> {
   name: N;
@@ -80,13 +89,19 @@ interface InjectSource<N extends string = string> {
 export interface Repository {
   name: string;
   repository: string;
-  type: REPOSITORY_TYPE[keyof REPOSITORY_TYPE];
+  type: REPOSITORY_TYPE;
 }
 
-export class TemplateSource<N extends string = string>
-  implements InjectSource<N>
+export class TemplateSource<
+  N extends string = string,
+  B extends string = string,
+> implements InjectSource<N>
 {
   public readonly baseSourceList: SourceInfo[];
+  public readonly baseSourceMap: Record<B, SourceInfo<B>> = {} as Record<
+    B,
+    SourceInfo<B>
+  >;
   public readonly injectSourceList: SourceInfo[];
   public readonly injectSourceMap: Record<N, SourceInfo<N>> = {} as Record<
     N,
@@ -94,13 +109,16 @@ export class TemplateSource<N extends string = string>
   >;
 
   constructor(options: {
-    baseSourceList: SourceInfo[];
-    injectSourceList: SourceInfo[];
+    baseSourceList: SourceInfo<B>[];
+    injectSourceList: SourceInfo<N>[];
   }) {
     this.baseSourceList = options.baseSourceList;
     this.injectSourceList = options.injectSourceList;
     for (const injectSourceInfo of options.injectSourceList) {
       this.injectSourceMap[injectSourceInfo.name] = injectSourceInfo;
+    }
+    for (const baseSourceInfo of options.baseSourceList) {
+      this.baseSourceMap[baseSourceInfo.name] = baseSourceInfo;
     }
   }
 
@@ -109,17 +127,21 @@ export class TemplateSource<N extends string = string>
     return path.join(this.injectSourceMap[name].pathname, PATHNAME.FILES);
   }
 
-  public static async build() {
-    const repositoryList = Object.values(getConfig().getSource());
-
-    const baseSourceList = [];
-
-    const injectSourceList = [];
+  public static async build(options: {
+    repositoryList: Repository[];
+    baseSourceList?: SourceInfo[];
+    injectSourceList?: SourceInfo[];
+  }) {
+    const {
+      baseSourceList = [],
+      injectSourceList = [],
+      repositoryList,
+    } = options;
 
     const globOption = { deep: 1, onlyDirectories: true, onlyFiles: false };
     const getSourceByPathAndType = async (
       pathname: string,
-      type: string,
+      type: SOURCE_TYPE,
       prefixName?: string,
     ): Promise<SourceInfo[]> => {
       const glob = `${type}-*`;
@@ -142,7 +164,17 @@ export class TemplateSource<N extends string = string>
       if (type === 'local') repositoryLocalPath = repository;
       else if (type === 'git')
         repositoryLocalPath = getGitRepositoryLocalPath(repository);
+      else throw new Error(`Wrong repository type "${type}"`);
 
+      if (!fs.existsSync(repositoryLocalPath))
+        throw new Error(
+          `There is no exist ${type} repository "${name}" ${
+            type === 'git' ? repository : repositoryLocalPath
+          }
+          Make sure the local path is exist or use "setup-cli update" to update git repo.`,
+        );
+
+      // e.g. base-a  ->  { name: <repoName>/a }
       baseSourceList.push(
         ...(await getSourceByPathAndType(repositoryLocalPath, 'base', name)),
       );
@@ -202,5 +234,7 @@ let templateSource: TemplateSource;
 
 export const getTemplateSource = async () => {
   if (templateSource) return templateSource;
-  return (templateSource = await TemplateSource.build());
+  return (templateSource = await TemplateSource.build({
+    repositoryList: Object.values(getConfig().getSource()),
+  }));
 };
