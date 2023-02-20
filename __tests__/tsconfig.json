@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "rootDir": "../",
+    "paths": {
+      "@/*": ["../src/*"]
+    },
+    "outDir": "./out"
+  },
+  "include": ["./**/*"],
+  "exclude": [
+    "./assets/config/**/*",
+    "./assets/file/**/*",
+    "./assets/shell/**/*"
+  ]
+}
