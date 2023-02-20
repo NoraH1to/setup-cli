@@ -1,4 +1,4 @@
-name: Test and generate coverage report
+name: test
 
 on:
   push:
