@@ -14,7 +14,7 @@ export const defaultRepo = {
   'default-remote': {
     name: 'default-remote',
     type: 'git',
-    repository: 'git@github.com:NoraH1to/setup-template-test.git',
+    repository: 'https://github.com/NoraH1to/setup-template-test.git',
   },
 } as const;
 

@@ -15,7 +15,7 @@ import type { Repository } from '@/Source';
 describe('Ensure git repo', () => {
   const repo: Repository = {
     name: 'test',
-    repository: 'git@github.com:NoraH1to/setup-template-test.git',
+    repository: 'https://github.com/NoraH1to/setup-template-test.git',
     type: 'git',
   };
   const repoDir = getGitRepositoryLocalPath(repo.repository);

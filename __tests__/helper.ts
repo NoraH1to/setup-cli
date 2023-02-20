@@ -34,7 +34,7 @@ export const getTestTemplateSource = async (name = 'default') =>
       },
       {
         name: `${name}-remote`,
-        repository: 'git@github.com:NoraH1to/setup-template-test.git',
+        repository: 'https://github.com/NoraH1to/setup-template-test.git',
         type: 'git',
       },
     ],
