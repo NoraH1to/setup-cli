@@ -4,6 +4,7 @@
 
 <p align="center">
 <a href="https://github.com/NoraH1to/setup-cli/actions/workflows/test.yml"><img src="https://github.com/NoraH1to/setup-cli/actions/workflows/test.yml/badge.svg" alt="test status"></a>
+<a href='https://coveralls.io/github/NoraH1to/setup-cli?branch=main'><img src='https://coveralls.io/repos/github/NoraH1to/setup-cli/badge.svg?branch=main' alt='Coverage Status' /></a>
 </p>
 
 ## ✨ Features
