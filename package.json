@@ -9,7 +9,8 @@
   "types": "dist/types/index.d.ts",
   "files": [
     "dist",
-    "types"
+    "types",
+    "scripts"
   ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
