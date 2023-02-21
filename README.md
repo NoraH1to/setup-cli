@@ -36,7 +36,7 @@
 install
 
 ```shell
-pnpm add @setup/cli -g
+pnpm add @norah1to/setup-cli -g
 ```
 
 use
