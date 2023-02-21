@@ -1,4 +1,6 @@
 # Changelog
+## [1.0.0-alpha.2](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2023-02-21)
+
 ## [1.0.0-alpha.1](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.0...v1.0.0-alpha.1) (2023-02-21)
 
 ## 1.0.0-alpha.0 (2023-02-21)
