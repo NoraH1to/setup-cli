@@ -1,5 +1,8 @@
 name: Release
 
+permissions:
+  contents: write
+
 on:
   push:
     tags:
@@ -7,24 +10,21 @@ on:
 
 jobs:
   build:
-    name: Create Release
-    runs-on: ${{matrix.os}}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-      fail-fast: false
+    name: Create git release
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
       - name: Create Release for Tag
-        id: release_tag
-        uses: yyx990803/release-tag@master
+        run: npx changelogithub
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          body: |
-            Please refer to [CHANGELOG.md](https://github.com/norah1to/setup-cli/main/CHANGELOG.md) for details.
