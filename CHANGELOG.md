@@ -1,4 +1,11 @@
 # Changelog
+## [1.0.0-alpha.3](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2023-02-21)
+
+
+### Bug Fixes
+
+* **update:** git error ([7541825](https://github.com/NoraH1to/setup-cli/commit/7541825ee381807eae1f45321de3c0f5c59aec10))
+
 ## [1.0.0-alpha.2](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2023-02-21)
 
 ## [1.0.0-alpha.1](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.0...v1.0.0-alpha.1) (2023-02-21)
