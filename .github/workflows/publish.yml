@@ -1,0 +1,35 @@
+name: Npm Publish
+
+on:
+  workflow_run:
+    workflows: [Test]
+    types: [completed]
+
+jobs:
+  publish-npm:
+    if: "${{ github.ref_type == 'tag' && contains(github.head_commit.message, 'release') }}"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Publish to NPM
+        run: pnpm -r publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
