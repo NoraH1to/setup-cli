@@ -2,6 +2,7 @@ import '@/utils/helper';
 
 import { FileInfo } from './File';
 import { useEnvVar } from './utils';
+import VError from 'verror';
 
 import type { Repository } from './Source';
 
@@ -30,7 +31,7 @@ export class Config extends FileInfo<{
   public addSource(options: { source: Repository }) {
     const { name } = options.source;
     if (this.jsonObj.repository[name])
-      throw new Error(`Source ${name} already exist`);
+      throw new VError(`Source ${name} already exist`);
     else this.editSource(options);
     return this;
   }

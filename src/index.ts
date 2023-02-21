@@ -2,6 +2,21 @@ import { program, Argument } from 'commander';
 import cmdCreate from './command/create';
 import cmdUpdate from './command/update';
 import cmdRepo, { OPT } from './command/repo';
+import VError from 'verror';
+
+const errHandle = (err: Error | VError) => {
+  if (err instanceof VError) {
+    console.error(chalk.yellow(err.message));
+    process.exit(0);
+  } else {
+    console.error(chalk.red(err.stack));
+    process.exit(1);
+  }
+};
+
+process.on('uncaughtException', errHandle);
+
+process.on('unhandledRejection', errHandle);
 
 program
   .command('create')
@@ -17,9 +32,7 @@ program
   .command('repo')
   .addArgument(new Argument('[opt]').choices(Object.values(OPT)))
   .description('Manage repository')
-  .action((opt) =>
-    cmdRepo({ opt }),
-  );
+  .action((opt) => cmdRepo({ opt }));
 
 program.parse();
 

@@ -7,6 +7,7 @@ import ora from 'ora';
 import { pathToFileURL } from 'url';
 import { PATHNAME } from './Source';
 import { hasKeys } from './utils';
+import VError from 'verror';
 
 import type { FileInfo } from './File';
 import type { SourceInfo, SOURCE_TYPE } from './Source';
@@ -147,16 +148,21 @@ export class HookHelper {
   public static async build(options: { target: SourceInfo; base: SourceInfo }) {
     const { target, base } = options;
 
-    const meta = (await Hook.getHookModelByPathname<'base'>(base.pathname))
-      ?.meta;
-
-    if (!meta) throw new Error(`Base template is missing "meta"`);
+    let meta;
+    try {
+      meta = (await Hook.getHookModelByPathname<'base'>(base.pathname))?.meta;
+    } catch {
+      /* empty */
+    }
+    if (!meta) throw new VError(`Base template ${base.name} is missing "meta"`);
 
     hasKeys({
       target: meta,
       keys: ['__dir_src__', '__pathname_entry__'],
       onHasNot(_, key) {
-        throw new Error(`Base template is missing the "${key}" key in meta`);
+        throw new VError(
+          `Base template ${base.name} is missing the "${String(key)}" key in meta`,
+        );
       },
     });
 

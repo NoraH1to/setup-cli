@@ -3,6 +3,7 @@ import '@/utils/helper';
 import normalizePath from 'normalize-path';
 import { getNameByPathnameAndType, useEnvVar } from './utils';
 import { getConfig } from './Config';
+import VError from 'verror';
 
 import type { UnionValues } from './utils';
 
@@ -164,14 +165,13 @@ export class TemplateSource<
       if (type === 'local') repositoryLocalPath = repository;
       else if (type === 'git')
         repositoryLocalPath = getGitRepositoryLocalPath(repository);
-      else throw new Error(`Wrong repository type "${type}"`);
+      else throw new VError(`Wrong repository type "${type}"`);
 
       if (!fs.existsSync(repositoryLocalPath))
-        throw new Error(
+        throw new VError(
           `There is no exist ${type} repository "${name}" ${
             type === 'git' ? repository : repositoryLocalPath
-          }
-          Make sure the local path is exist or use "setup-cli update" to update git repo.`,
+          }\nMake sure the local path is exist or use "setup-cli update" to update git repo.`,
         );
 
       // e.g. base-a  ->  { name: <repoName>/a }

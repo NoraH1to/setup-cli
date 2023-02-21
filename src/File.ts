@@ -1,5 +1,7 @@
 import '@/utils/helper';
 
+import VError from 'verror';
+
 type JsonObj = Record<string | number, object | Array<unknown>>;
 
 export class FileInfo<J extends JsonObj = JsonObj> {
@@ -14,7 +16,7 @@ export class FileInfo<J extends JsonObj = JsonObj> {
   constructor(pathname: string) {
     const p = path.parse(pathname);
     if (p.root === '')
-      throw new Error(`Illegal pathname ${pathname}`);
+      throw new VError(`Illegal pathname ${pathname}`);
     this.pathname = pathname;
     this.dirname = p.dir;
     this.filename = p.base;
