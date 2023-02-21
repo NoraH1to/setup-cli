@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "postinstall": "setup-cli update",
+    "postinstall": "node ./scripts/init.js",
     "prepare": "ts-patch install -s && git init && pnpm husky install",
     "dev": "pnpm build -w",
     "build": "rollup -c rollup.config.js",
