@@ -48,6 +48,7 @@ export const ensureRepository = async (options: {
   options.onProcess?.();
 
   if (!fs.existsSync(path.resolve(targetPath, '.git'))) {
+    await $`git config --global core.longpaths true`;
     await $`git clone ${repository} ${targetPath}`;
     await $`git -C ${targetPath} checkout -B main `;
   } else {
