@@ -6,9 +6,9 @@ import VError from 'verror';
 
 import type { Repository } from './Source';
 
-const { __path_cache } = useEnvVar();
+const { __dir_cache } = useEnvVar();
 
-const configPathname = path.resolve(__path_cache, 'config.yml');
+const configPathname = path.resolve(__dir_cache, 'config.yml');
 
 // TODO: replace test repo
 export const defaultRepo = {

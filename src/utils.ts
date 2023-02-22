@@ -2,32 +2,34 @@ import '@/utils/helper';
 
 import { SOURCE_TYPE } from '@/Source';
 import { fileURLToPath } from 'url';
+import { homedir } from 'os';
 
-const __path_src_root = path.resolve(
+const __dir_home = homedir();
+const __dir_src_root = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   './',
 );
-const __path_cache = path.resolve(
-  __path_src_root,
-  '../node_modules/.cache/@setup',
+const __dir_cache = path.resolve(
+  __dir_home,
+  './.cache/@setup',
 );
-fs.ensureDir(__path_cache);
-const __path_cache_git = path.resolve(__path_cache, './__git_cache__');
-fs.ensureDir(__path_cache_git);
-const __path_cache_generator = path.resolve(
-  __path_cache,
+fs.ensureDir(__dir_cache);
+const __dir_cache_git = path.resolve(__dir_cache, './__git_cache__');
+fs.ensureDir(__dir_cache_git);
+const __dir_cache_generator = path.resolve(
+  __dir_cache,
   './__generator_cache__',
 );
-fs.ensureDir(__path_cache_generator);
-const __path_cache_test = path.resolve(__path_cache, './__test_cache__');
-fs.ensureDir(__path_cache_test);
+fs.ensureDir(__dir_cache_generator);
+const __dir_cache_test = path.resolve(__dir_cache, './__test_cache__');
+fs.ensureDir(__dir_cache_test);
 
 export const useEnvVar = () => ({
-  __path_src_root,
-  __path_cache,
-  __path_cache_git,
-  __path_cache_generator,
-  __path_cache_test,
+  __dir_src_root,
+  __dir_cache,
+  __dir_cache_git,
+  __dir_cache_generator,
+  __dir_cache_test,
 });
 
 export const useEnvVarCurrent = (url: string) => {

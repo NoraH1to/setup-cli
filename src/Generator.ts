@@ -11,7 +11,7 @@ import type { Ora } from 'ora';
 import type { SourceInfo } from './Source';
 import type { Hooks } from './Hook';
 
-const { __path_cache_generator } = useEnvVar();
+const { __dir_cache_generator } = useEnvVar();
 
 /**
  * src write into dest
@@ -58,7 +58,7 @@ export class Generator<N extends string = string> {
   private hash: string = nanoid();
 
   private tempPathname: string = path.resolve(
-    __path_cache_generator,
+    __dir_cache_generator,
     this.hash,
   );
 

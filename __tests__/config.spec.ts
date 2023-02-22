@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid';
 
 import type { Repository } from '@/Source';
 
-const { __path_cache_test } = useEnvVar();
+const { __dir_cache_test } = useEnvVar();
 
 describe('Source', () => {
   let pathnameMap = {
@@ -103,7 +103,7 @@ describe('Source', () => {
 
   it('should generate file after save() called', () => {
     const configPathname = path.resolve(
-      __path_cache_test,
+      __dir_cache_test,
       `./config/${nanoid()}Config.yml`,
     );
 

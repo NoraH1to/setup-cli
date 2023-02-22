@@ -7,7 +7,7 @@ import VError from 'verror';
 
 import type { UnionValues } from './utils';
 
-const { __path_cache_git } = useEnvVar();
+const { __dir_cache_git } = useEnvVar();
 
 export const PATHNAME = {
   FILES: 'files',
@@ -72,7 +72,7 @@ export const ensureRepository = async (options: {
 };
 
 export const getGitRepositoryLocalPath = (repository: string) => {
-  return path.resolve(__path_cache_git, repository.replace(/[@,:,/]/g, '_'));
+  return path.resolve(__dir_cache_git, repository.replace(/[@,:,/]/g, '_'));
 };
 
 interface BaseSource {
