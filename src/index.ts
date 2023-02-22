@@ -6,10 +6,10 @@ import VError from 'verror';
 
 const errHandle = (err: Error | VError) => {
   if (err instanceof VError) {
-    console.error(chalk.yellow(err.message));
+    console.error(chalk.black.bgRed(' ERROR ') ,chalk.red(err.message));
     process.exit(0);
   } else {
-    console.error(chalk.red(err.stack));
+    console.error(chalk.black.bgRed(' UNCATCH ERROR '), chalk.red(err.stack));
     process.exit(1);
   }
 };
