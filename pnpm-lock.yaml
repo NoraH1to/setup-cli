@@ -26,7 +26,7 @@ specifiers:
   inquirer-autocomplete-prompt: ^3.0.0
   inquirer-checkbox-plus-prompt: ^1.4.2
   lint-staged: ^13.1.0
-  nanoid: ^4.0.0
+  nanoid: ^4.0.1
   normalize-path: ^3.0.0
   ora: ^6.1.2
   prettier: ^2.8.3
@@ -50,6 +50,8 @@ dependencies:
   inquirer: 9.1.4
   inquirer-autocomplete-prompt: 3.0.0_inquirer@9.1.4
   inquirer-checkbox-plus-prompt: 1.4.2_inquirer@9.1.4
+  nanoid: 4.0.1
+  normalize-path: 3.0.0
   ora: 6.1.2
   verror: 1.10.1
   yaml: 2.2.1
@@ -72,8 +74,6 @@ devDependencies:
   eslint: 8.33.0
   husky: 8.0.3
   lint-staged: 13.1.0
-  nanoid: 4.0.0
-  normalize-path: 3.0.0
   prettier: 2.8.3
   rollup: 3.12.0
   rollup-plugin-delete: 2.0.0
@@ -3232,11 +3232,11 @@ packages:
     hasBin: true
     dev: true
 
-  /nanoid/4.0.0:
-    resolution: {integrity: sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==}
+  /nanoid/4.0.1:
+    resolution: {integrity: sha512-udKGtCCUafD3nQtJg9wBhRP3KMbPglUsgV5JVsXhvyBs/oefqb4sqMEhKBBgqZncYowu58p1prsZQBYvAj/Gww==}
     engines: {node: ^14 || ^16 || >=18}
     hasBin: true
-    dev: true
+    dev: false
 
   /natural-compare-lite/1.4.0:
     resolution: {integrity: sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g==}
@@ -3272,7 +3272,6 @@ packages:
   /normalize-path/3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
-    dev: true
 
   /npm-run-path/4.0.1:
     resolution: {integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==}
