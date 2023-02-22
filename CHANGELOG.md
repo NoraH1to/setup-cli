@@ -1,4 +1,11 @@
 # Changelog
+## [1.0.0-alpha.4](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2023-02-22)
+
+
+### Bug Fixes
+
+* **repo:** fix "$GIT_DIR too big" error cause by pnpm's long dir ([d9e115f](https://github.com/NoraH1to/setup-cli/commit/d9e115f9169f2ef31ffd7b7ac3068b329060551c))
+
 ## [1.0.0-alpha.3](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2023-02-21)
 
 
