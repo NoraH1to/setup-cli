@@ -1,4 +1,11 @@
 # Changelog
+## [1.0.0-alpha.5](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2023-02-23)
+
+
+### Bug Fixes
+
+* **file:** file content should not be undefined when file exist and empty ([bf0eb88](https://github.com/NoraH1to/setup-cli/commit/bf0eb88980e4dc1daf1f67cafd70c056667fb584))
+
 ## [1.0.0-alpha.4](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2023-02-22)
 
 
