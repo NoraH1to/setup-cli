@@ -36,6 +36,9 @@ export const getCreateOptions = async (): Promise<CreateOptions> => {
           source.push({ name: input, value: { name: input, pathname: null } });
         return source;
       },
+      validate: (input) => {
+        return input?.value?.pathname !== null ? true : 'Required';
+      },
     },
     {
       name: 'inject',
