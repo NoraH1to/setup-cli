@@ -10,12 +10,11 @@ const { __dir_cache } = useEnvVar();
 
 const configPathname = path.resolve(__dir_cache, 'config.yml');
 
-// TODO: replace test repo
 export const defaultRepo = {
   'default-remote': {
     name: 'default-remote',
     type: 'git',
-    repository: 'https://github.com/NoraH1to/setup-template-test.git',
+    repository: 'https://github.com/NoraH1to/setup-template.git',
   },
 } as const;
 
