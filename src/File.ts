@@ -29,7 +29,7 @@ export class FileInfo<J extends JsonObj = JsonObj> {
     try {
       if (this.exist) {
         const s = fs.readFileSync(this.pathname).toString();
-        this.setContent(s === '' ? undefined : s);
+        this.setContent(s);
       }
     } catch (e) {
       console.error(chalk.red((e as Error).stack));
@@ -41,7 +41,7 @@ export class FileInfo<J extends JsonObj = JsonObj> {
       if (this.ext === '.json') this.jsonObj = JSON.parse(this.content);
       else if (this.ext === '.yml') this.jsonObj = YAML.parse(this.content);
     } catch (e) {
-      if (this.content !== undefined)
+      if (this.content !== '')
         console.error(chalk.redBright((e as Error).stack));
     }
   }

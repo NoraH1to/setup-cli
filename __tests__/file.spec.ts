@@ -21,16 +21,16 @@ describe('FileInfo', () => {
 
   it('should has empty content and jsonObj when file is empty', () => {
     let file = new FileInfo(pathnameMap.emptyJson);
-    expect(file.getContent()).toBe(undefined);
-    expect(file.getJson()).toBe(undefined);
+    expect(file.getContent()).not.toBeTruthy();
+    expect(file.getJson()).not.toBeTruthy();
 
     file = new FileInfo(pathnameMap.emptyYml);
-    expect(file.getContent()).toBe(undefined);
-    expect(file.getJson()).toBe(undefined);
+    expect(file.getContent()).not.toBeTruthy();
+    expect(file.getJson()).not.toBeTruthy();
 
     file = new FileInfo(pathnameMap.emptyFile);
-    expect(file.getContent()).toBe(undefined);
-    expect(file.getJson()).toBe(undefined);
+    expect(file.getContent()).not.toBeTruthy();
+    expect(file.getJson()).not.toBeTruthy();
   });
 
   it('should has content when file has content', () => {
