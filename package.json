@@ -22,7 +22,10 @@
     "test": "vitest run --coverage.enabled --coverage.provider=c8 --coverage.reporter=lcov"
   },
   "keywords": [
-    "cli"
+    "cli",
+    "setup",
+    "setup-cli",
+    "norah1to"
   ],
   "author": "norah1to <norah1to@qq.com>",
   "repository": "https://github.com/NoraH1to/setup-cli",
