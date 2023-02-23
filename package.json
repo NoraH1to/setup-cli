@@ -25,6 +25,7 @@
     "cli"
   ],
   "author": "norah1to <norah1to@qq.com>",
+  "repository": "https://github.com/NoraH1to/setup-cli",
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
