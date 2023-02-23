@@ -2,10 +2,20 @@ import '@/utils/helper';
 
 import inquirer from 'inquirer';
 import inquirerAutocompletePrompt from 'inquirer-autocomplete-prompt';
+import inquirerCheckboxPlusPrompt from 'inquirer-checkbox-plus-prompt';
 import { getTemplateSource, SourceInfo, REPOSITORY_TYPE } from './Source';
 import { getConfig } from './Config';
 
 inquirer.registerPrompt('autocomplete', inquirerAutocompletePrompt);
+inquirer.registerPrompt('autocomplete-checkbox', inquirerCheckboxPlusPrompt);
+
+const filterSourceInfoList = (input: string, list: SourceInfo[]) =>
+  list
+    .filter((info) => (input ? info.name.includes(input) : true))
+    .map((info) => ({
+      name: info.name,
+      value: info,
+    }));
 
 export interface CreateOptions {
   project: SourceInfo;
@@ -26,15 +36,10 @@ export const getCreateOptions = async (): Promise<CreateOptions> => {
       message: 'Select base template',
       type: 'autocomplete',
       source: async (ans, input) => {
-        const source = (await getTemplateSource()).baseSourceList
-          .filter((info) => (input ? info.name.includes(input) : true))
-          .map((info) => ({
-            name: info.name,
-            value: info,
-          }));
-        if (!source.length)
-          source.push({ name: input, value: { name: input, pathname: null } });
-        return source;
+        return filterSourceInfoList(
+          input,
+          (await getTemplateSource()).baseSourceList,
+        );
       },
       validate: (input) => {
         return input?.value?.pathname !== null ? true : 'Required';
@@ -43,14 +48,15 @@ export const getCreateOptions = async (): Promise<CreateOptions> => {
     {
       name: 'inject',
       message: 'Select what need inject',
-      type: 'checkbox',
-      choices: async () =>
-        (
-          await getTemplateSource()
-        ).injectSourceList.map((info) => ({
-          name: info.name,
-          value: info,
-        })),
+      type: 'autocomplete-checkbox',
+      searchable: true,
+      highlight: true,
+      source: async (ans, input) => {
+        return filterSourceInfoList(
+          input,
+          (await getTemplateSource()).injectSourceList,
+        );
+      },
       default: [],
     },
   ]);
