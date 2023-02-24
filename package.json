@@ -1,6 +1,6 @@
 {
   "name": "@norah1to/setup-cli",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.7",
   "description": "Flexibility to build \"your\" application templates",
   "type": "module",
   "bin": {

@@ -1,4 +1,17 @@
 # Changelog
+## [1.0.0-alpha.7](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2023-02-24)
+
+
+### Features
+
+* **qa:** checkbox add search support ([70a7a10](https://github.com/NoraH1to/setup-cli/commit/70a7a10678786d89893d31d258ecbe43a3a69706))
+
+
+### Bug Fixes
+
+* **qa:** the base template for the create command should be required ([b8bfacc](https://github.com/NoraH1to/setup-cli/commit/b8bfaccf496d3e2c18db70a92e89ba86672fae1d))
+* **scripts/init:** failed to initialize properly ([45fb7e9](https://github.com/NoraH1to/setup-cli/commit/45fb7e9558a430e612c424d373be00aad6d971c3))
+
 ## [1.0.0-alpha.6](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.5...v1.0.0-alpha.6) (2023-02-23)
 
 ## [1.0.0-alpha.5](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2023-02-23)
