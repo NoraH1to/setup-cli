@@ -7,6 +7,12 @@
 <a href='https://coveralls.io/github/NoraH1to/setup-cli?branch=main'><img src='https://coveralls.io/repos/github/NoraH1to/setup-cli/badge.svg?branch=main' alt='Coverage Status' /></a>
 </p>
 
+<p align="center">
+  <img width="500" src="https://raw.githubusercontent.com/NoraH1to/setup-cli/main/demo.gif">
+  <br>
+  <span>GIF made by <a href="https://github.com/charmbracelet/vhs">VHS</a></span>
+</p>
+
 ## ✨ Features
 
 - **Simple**: Use in simple way.
@@ -74,6 +80,14 @@ show repo list
 
 ```bash
 setup-cli list
+```
+
+### update
+
+synchronize the local repo with the remote
+
+```bash
+setup-cli update
 ```
 
 ### inject
