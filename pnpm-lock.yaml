@@ -37,6 +37,7 @@ specifiers:
   tslib: ^2.4.1
   typescript: ^4.9.4
   typescript-transform-paths: ^3.4.6
+  utility-types: ^3.10.0
   verror: ^1.10.1
   vitest: ^0.28.4
   yaml: ^2.2.1
@@ -82,6 +83,7 @@ devDependencies:
   tslib: 2.5.0
   typescript: 4.9.4
   typescript-transform-paths: 3.4.6_typescript@4.9.4
+  utility-types: 3.10.0
   vitest: 0.28.4
 
 packages:
@@ -4344,6 +4346,11 @@ packages:
 
   /util-deprecate/1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  /utility-types/3.10.0:
+    resolution: {integrity: sha512-O11mqxmi7wMKCo6HKFt5AhO4BwY3VV68YU07tgxfz8zJTIxr4BpsezN49Ffwy9j3ZpwwJp4fkRwjRzq3uWE6Rg==}
+    engines: {node: '>= 4'}
+    dev: true
 
   /uuid/3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}

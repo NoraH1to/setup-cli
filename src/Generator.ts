@@ -26,8 +26,10 @@ export const copyFile = async (options: {
     fs.copyFileSync(src, dest);
     return;
   }
-  const srcFile = new FileInfo(src);
-  const destFile = new FileInfo(path.join(dest, srcFile.filename));
+  const srcFile = FileInfo.build({ pathname: src });
+  const destFile = FileInfo.build({
+    pathname: path.join(dest, srcFile.filename),
+  });
   fs.writeFileSync(
     destFile.pathname,
     hook.hasHook('onMerging')

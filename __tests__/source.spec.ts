@@ -66,8 +66,8 @@ describe('Template source', () => {
   it('should load correct template', async () => {
     const source = await getTestTemplateSource('default');
 
-    expect(source.baseSourceList.length).toBe(3);
-    expect(source.injectSourceList.length).toBe(3);
+    expect(source.baseSourceList.length).toBe(2);
+    expect(source.injectSourceList.length).toBe(2);
 
     expect(source.baseSourceMap['default/has-meta']).toBeTruthy();
     expect(source.baseSourceMap['default/has-not-meta']).toBeTruthy();

@@ -1,6 +1,11 @@
 import { TemplateSource } from '@/Source';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { useEnvVar } from '@/utils';
+import { nanoid } from 'nanoid';
+import { beforeAll, afterAll } from 'vitest';
+
+const { __dir_cache_test } = useEnvVar();
 
 export const getPathnameMapByNameAndExtList = (
   nameList: string[],
@@ -32,11 +37,6 @@ export const getTestTemplateSource = async (name = 'default') =>
         repository: path.resolve(__dirname, './assets/source'),
         type: 'local',
       },
-      {
-        name: `${name}-remote`,
-        repository: 'https://github.com/NoraH1to/setup-template-test.git',
-        type: 'git',
-      },
     ],
   });
 
@@ -50,3 +50,25 @@ export const templateSourcePathnameMap = getPathnameMapByNameAndExtList(
   [''],
   'source',
 );
+
+export const getTempCacheDirFn = (pathname: string) => (ensure?: boolean) => {
+  const target = path.join(__dir_cache_test, pathname, nanoid());
+  ensure && fs.ensureDirSync(target);
+  return target;
+};
+
+export const clearCacheDir = (pathname?: string) => {
+  pathname = path.join(__dir_cache_test, pathname);
+  try {
+    fs.readdirSync(pathname).forEach((name) =>
+      fs.rmSync(path.join(pathname, name), { recursive: true }),
+    );
+  } catch {
+    /* empty */
+  }
+};
+
+export const autoClearCacheDir = (pathname?: string) => {
+  beforeAll(() => clearCacheDir(pathname));
+  afterAll(() => clearCacheDir(pathname));
+};

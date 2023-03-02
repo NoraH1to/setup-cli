@@ -21,8 +21,8 @@ export const defaultRepo = {
 export class Config extends FileInfo<{
   repository: { [key: string]: Repository };
 }> {
-  constructor(pathname) {
-    super(pathname);
+  constructor(pathname: string) {
+    super({ pathname });
     if (!this.jsonObj) this.jsonObj = { repository: defaultRepo };
     if (!this.jsonObj.repository) this.jsonObj.repository = defaultRepo;
   }

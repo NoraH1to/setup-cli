@@ -1,14 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import { Config, defaultRepo } from '@/Config';
-import { useEnvVar } from '@/utils';
-import { getPathnameMapByNameAndExtList } from './helper';
+import {
+  getPathnameMapByNameAndExtList,
+  getTempCacheDirFn,
+  autoClearCacheDir,
+} from './helper';
 import { nanoid } from 'nanoid';
 
 import type { Repository } from '@/Source';
 
-const { __dir_cache_test } = useEnvVar();
+const getTempCacheDir = getTempCacheDirFn('config');
 
 describe('Source', () => {
+  autoClearCacheDir('config');
   let pathnameMap = {
     emptyYml: '',
     hasNotSourceYml: '',
@@ -102,9 +106,9 @@ describe('Source', () => {
   });
 
   it('should generate file after save() called', () => {
-    const configPathname = path.resolve(
-      __dir_cache_test,
-      `./config/${nanoid()}Config.yml`,
+    const configPathname = path.join(
+      getTempCacheDir(),
+      `/${nanoid()}Config.yml`,
     );
 
     expect(fs.existsSync(configPathname)).not.toBeTruthy();
