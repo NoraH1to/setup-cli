@@ -11,8 +11,8 @@ const { __dir_cache } = useEnvVar();
 const configPathname = path.resolve(__dir_cache, 'config.yml');
 
 export const defaultRepo = {
-  'default-remote': {
-    name: 'default-remote',
+  'official': {
+    name: 'official',
     type: 'git',
     repository: 'https://github.com/NoraH1to/setup-template.git',
   },
