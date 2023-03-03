@@ -100,6 +100,15 @@ export class DirInfo implements Status {
     return this._dig(paths, { ...options, ensure: false });
   }
 
+  public getMap<O extends DirInfoCURDOptions>(
+    options?: O,
+  ): Record<string, DirOrFile<O>>;
+  public getMap<O extends DirInfoCURDOptions>(options: O = {} as O) {
+    if (!options.type) return { ...this.dirMap, ...this.fileMap };
+    else if (options.type === 'dir') return { ...this.dirMap };
+    else return { ...this.fileMap };
+  }
+
   /**
    * @param pathname `"/path/to/something"`
    */
