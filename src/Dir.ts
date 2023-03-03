@@ -1,14 +1,13 @@
 import { FileInfo, Status } from './File';
 import np from 'normalize-path';
 
-import type { Virtual } from './File';
 import type { Required } from 'utility-types';
 import VError from 'verror';
 
 type DirInfoConstructorOptions = {
   parent?: DirInfo | null;
   pathname: string;
-} & Virtual<DirInfo>;
+};
 type DirInfoCURDOptions = {
   type?: 'file' | 'dir';
 };
@@ -133,30 +132,45 @@ export class DirInfo implements Status {
     if (this.cachePath.has(cacheKey)) return this.cachePath.get(cacheKey);
 
     const cur = paths.shift();
+    const isTarget = !paths.length;
+    const needEnsure = options.ensure && options.type;
+    const curTarget = this._getAny(cur);
 
     // ensure
-    if (options.ensure && options.type) {
+    if (needEnsure) {
       if (
-        (this._hasFile(cur) && paths.length) ||
-        (!paths.length &&
-          this._hasAny(cur) &&
-          this._getAny(cur).isDir !== (options.type === 'dir'))
-      )
-        DirInfo.throwDuplicateNameError(this._getAny(cur));
-      const map = options.type === 'dir' ? this.dirMap : this.fileMap;
-      const build = options.type === 'dir' ? DirInfo.build : FileInfo.build;
+        isTarget
+          ? curTarget && curTarget.isDir !== (options.type === 'dir')
+          : this._hasFile(cur)
+      ) {
+        throw new VError(
+          `Failed to create ${curTarget.isDir ? 'file' : 'folder'} "${
+            curTarget.pathname
+          }", a ${
+            curTarget.isDir ? 'folder' : 'file'
+          } with the same name already exists`,
+        );
+      }
+      const map = isTarget
+        ? options.type === 'dir'
+          ? this.dirMap
+          : this.fileMap
+        : this.dirMap;
+      const build = isTarget
+        ? options.type === 'dir'
+          ? DirInfo.build
+          : FileInfo.build
+        : DirInfo.build;
       const pathname = path.resolve(this.pathname, cur);
-      map[cur] = build({ pathname, parent: this, virtual: true });
+      map[cur] = build({ pathname, parent: this });
     }
 
     // target
     let res;
-    if (!paths.length) {
+    if (isTarget) {
       res = this._getAny(cur, options);
     } else {
       // recursive
-      if (options.ensure && options.type && !this._hasDir(cur))
-        fs.ensureDirSync(path.resolve(this.pathname, cur));
       res = this._getDir(cur)?._dig(paths, options);
       // cache path
       paths.unshift(cur);
@@ -210,14 +224,5 @@ export class DirInfo implements Status {
   }
   private _hasFile(name: string) {
     return !!this._getFile(name);
-  }
-
-  /**
-   * common errors
-   */
-  private static throwDuplicateNameError(target: FileInfo | DirInfo) {
-    throw new VError(
-      `Ensuring folder "${target.pathname}" failed, a file with the same name already exists`,
-    );
   }
 }

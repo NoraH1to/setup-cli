@@ -3,18 +3,9 @@ import '@/utils/helper';
 import VError from 'verror';
 import { DirInfo } from './Dir';
 
-import type { OmitByValue } from 'utility-types';
-
 export interface Status {
   isDir: boolean;
   exist: boolean;
-}
-export interface Virtual<
-  T,
-  PK extends keyof OmitByValue<T, (...args: unknown[]) => unknown> = never,
-> {
-  virtual?: boolean;
-  meta?: Pick<OmitByValue<T, (...args: unknown[]) => unknown>, PK>;
 }
 
 type JsonObj = Record<string | number, object | Array<unknown>>;
@@ -22,7 +13,7 @@ type JsonObj = Record<string | number, object | Array<unknown>>;
 type FileInfoConstructorOptions = {
   pathname: string;
   parent?: DirInfo;
-} & Virtual<FileInfo, 'pathname' | 'parent'>;
+};
 
 const cacheFileInfo = new Map<string, FileInfo>();
 export class FileInfo<J extends JsonObj = JsonObj> implements Status {
@@ -40,12 +31,7 @@ export class FileInfo<J extends JsonObj = JsonObj> implements Status {
    * @deprecated use `FileInfo.build(...)` instead
    */
   constructor(options: FileInfoConstructorOptions) {
-    const { virtual, meta } = options;
-    let { pathname, parent } = options;
-    if (virtual) {
-      meta?.pathname && (pathname = meta.pathname);
-      meta?.parent && (parent = meta.parent);
-    }
+    const { pathname, parent } = options;
     const p = path.parse(pathname);
     if (p.root === '') throw new VError(`Illegal pathname ${pathname}`);
     this.pathname = pathname;
