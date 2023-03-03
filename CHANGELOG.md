@@ -1,4 +1,29 @@
 # Changelog
+## [1.0.0-alpha.8](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.7...v1.0.0-alpha.8) (2023-03-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **hook:** `afterGenerate` will be executed after the build is complete and before the file is
+output
+* **generator:** `beforeMerge` and `afterMerge` are now called before and after each `eMerging`,
+respectively, and provide directory information and file information
+
+### Features
+
+* **command:** add `reset` command ([4dd491b](https://github.com/NoraH1to/setup-cli/commit/4dd491bbdae73753ede7b5b69e2ba0723bf7c2f0))
+* **dirinfo:** add `getMap` function to get item's collection ([4ba360c](https://github.com/NoraH1to/setup-cli/commit/4ba360c900852ba6db0c833c9ab6bdec1e3089e6))
+* **dirinfo:** added DirInfo class for managing files in memory ([ccf704b](https://github.com/NoraH1to/setup-cli/commit/ccf704b5287038be9c5a91fbad50739dd80c5606))
+* **hook:** add `beforeMerge`, `afterMerge`, `afterOutput` hooks ([134ed97](https://github.com/NoraH1to/setup-cli/commit/134ed97f08c56d77d40521d9d08405a8cdf37e4d))
+
+
+### Bug Fixes
+
+* **dirinfo:** the directory name is not set correctly ([3d9650c](https://github.com/NoraH1to/setup-cli/commit/3d9650cc97ded426b626b8cf7a04da832b982198))
+
+
+* **generator:** modify files in memory to reduce I/O ([aa5f08d](https://github.com/NoraH1to/setup-cli/commit/aa5f08dc18194bab178b9026652e063f5971b24a))
+
 ## [1.0.0-alpha.7](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.6...v1.0.0-alpha.7) (2023-02-24)
 
 
