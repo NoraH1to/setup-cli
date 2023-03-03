@@ -66,7 +66,7 @@ setup-cli repo <add|set|rm>
 Show repo list
 
 ```bash
-setup-cli list
+setup-cli repo list
 ```
 
 ### update
