@@ -6,7 +6,7 @@ import VError from 'verror';
 
 const errHandle = (err: Error | VError) => {
   if (err instanceof VError) {
-    console.error(chalk.black.bgRed(' ERROR ') ,chalk.red(err.message));
+    console.error(chalk.black.bgRed(' ERROR '), chalk.red(err.message));
     process.exit(0);
   } else {
     console.error(chalk.black.bgRed(' UNCATCH ERROR '), chalk.red(err.stack));
@@ -34,8 +34,11 @@ program
   .description('Manage repository')
   .action((opt) => cmdRepo({ opt }));
 
+program.command('reset').action(() => reset());
+
 program.parse();
 
 import type { Hooks as _Hooks } from './Hook';
+import reset from './command/reset';
 export type { InjectHook, BaseHook } from './Hook';
 export type Hooks = Partial<_Hooks>;
