@@ -4,7 +4,8 @@
 
 <p align="center">
 <a href="https://github.com/NoraH1to/setup-cli/actions/workflows/test.yml"><img src="https://github.com/NoraH1to/setup-cli/actions/workflows/test.yml/badge.svg" alt="test status"></a>
-<a href='https://coveralls.io/github/NoraH1to/setup-cli?branch=main'><img src='https://coveralls.io/repos/github/NoraH1to/setup-cli/badge.svg?branch=main' alt='Coverage Status' /></a>
+<a href="https://coveralls.io/github/NoraH1to/setup-cli?branch=main" target="_blank"><img src="https://coveralls.io/repos/github/NoraH1to/setup-cli/badge.svg?branch=main" alt="Coverage Status" /></a>
+<a href="https://www.npmjs.com/package/@norah1to/setup-cli?activeTab=readme" target="_blank"><img alt="npm" src="https://img.shields.io/npm/dw/@norah1to/setup-cli"></a>
 </p>
 
 <p align="center">
@@ -15,6 +16,8 @@
 
 ## ✨ Features
 
+❗ `ESM` only, `pnpm` only.
+
 - **Simple**: Use in simple way.
 
 - **Simple**: Build in simple way.
@@ -23,23 +26,7 @@
 
 ## 🔨 Todo
 
-- [x] core
-
-  - [x] QA
-
-  - [x] Generator
-
-  - [x] Hook
-
-- [ ] command
-
-  - [x] create
-
-  - [ ] inject
-
-  - [x] repo
-
-- [x] unit test
+- [ ] `inject` command
 
 - [ ] [default templates](https://github.com/NoraH1to/setup-template) 🚧
 
@@ -47,13 +34,13 @@
 
 ## 🪄 Usage
 
-install
+Install
 
 ```shell
 pnpm add @norah1to/setup-cli -g
 ```
 
-use
+Help
 
 ```bash
 setup-cli help
@@ -61,7 +48,7 @@ setup-cli help
 
 ### create
 
-create a app
+Create a app
 
 ```bash
 setup-cli create
@@ -69,14 +56,14 @@ setup-cli create
 
 ### repo
 
-opt repo
+Opt repo
 
 ```bash
 # Recommend exec "setup-cli update" after do this
-setup-cli <add|set|rm>
+setup-cli repo <add|set|rm>
 ```
 
-show repo list
+Show repo list
 
 ```bash
 setup-cli list
@@ -84,7 +71,7 @@ setup-cli list
 
 ### update
 
-synchronize the local repo with the remote
+Synchronize the local repo with the remote
 
 ```bash
 setup-cli update
@@ -93,6 +80,14 @@ setup-cli update
 ### inject
 
 Todo
+
+### reset
+
+Reset the CLI to the state it was first installed in
+
+```bash
+setup-cli reset
+```
 
 ## 🚀 Custom
 
@@ -120,6 +115,10 @@ const hook = () => ({ ... });
 export default hook;
 ```
 
+### Hooks
+
+Todo
+
 ### Third-party deps
 
 Of course, you can also use third-party dependencies through packaging tools.
@@ -141,6 +140,6 @@ export default hook;
 
 ### Inject
 
-Base templates must start with `inject-` like `inject-lint`.
+Inject templates must start with `inject-` like `inject-lint`.
 
 It does **not need** to additionally export metadata (temporarily)
