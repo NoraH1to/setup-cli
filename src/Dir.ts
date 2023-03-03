@@ -1,8 +1,10 @@
 import { FileInfo, Status } from './File';
 import np from 'normalize-path';
+import { isDir } from './utils';
+import VError from 'verror';
 
 import type { Required } from 'utility-types';
-import VError from 'verror';
+
 
 type DirInfoConstructorOptions = {
   parent?: DirInfo | null;
@@ -46,13 +48,7 @@ export class DirInfo implements Status {
     // build tree
     const oriDirInfo = fs.readdirSync(this.pathname, { withFileTypes: true });
     oriDirInfo.forEach((f) => {
-      if (
-        f.isDirectory() ||
-        (f.isSymbolicLink() &&
-          fs
-            .statSync(fs.readlinkSync(path.resolve(this.pathname, f.name)))
-            .isDirectory())
-      ) {
+      if (isDir(path.resolve(this.pathname, f.name))) {
         this.dirMap[f.name] = DirInfo.build({
           parent: this,
           pathname: path.join(this.pathname, f.name),

@@ -125,3 +125,16 @@ export const getRepoOptions = async (
 
   return answer;
 };
+
+export const getConfirm = async (msg: string) => {
+  return (
+    await inquirer.prompt<{ confirm: boolean }>([
+      {
+        name: 'confirm',
+        message: msg,
+        type: 'confirm',
+        default: false,
+      },
+    ])
+  ).confirm;
+};

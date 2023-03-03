@@ -8,7 +8,7 @@ export interface Status {
   exist: boolean;
 }
 
-type JsonObj = Record<string | number, object | Array<unknown>>;
+type JsonObj = Record<string | number, object | Array<unknown> | string | number>;
 
 type FileInfoConstructorOptions = {
   pathname: string;

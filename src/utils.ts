@@ -5,14 +5,7 @@ import { fileURLToPath } from 'url';
 import { homedir } from 'os';
 
 const __dir_home = homedir();
-const __dir_src_root = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  './',
-);
-const __dir_cache = path.resolve(
-  __dir_home,
-  './.cache/@setup',
-);
+const __dir_cache = path.resolve(__dir_home, './.cache/@setup');
 fs.ensureDir(__dir_cache);
 const __dir_cache_git = path.resolve(__dir_cache, './__git_cache__');
 fs.ensureDir(__dir_cache_git);
@@ -25,7 +18,6 @@ const __dir_cache_test = path.resolve(__dir_cache, './__test_cache__');
 fs.ensureDir(__dir_cache_test);
 
 export const useEnvVar = () => ({
-  __dir_src_root,
   __dir_cache,
   __dir_cache_git,
   __dir_cache_generator,
@@ -61,6 +53,14 @@ export function hasKeys<T extends object = object>(options: {
     }
   }
   return true;
+}
+
+export function isDir(pathname: string) {
+  const f = fs.statSync(pathname);
+  return (
+    f.isDirectory() ||
+    (f.isSymbolicLink() && fs.statSync(fs.readlinkSync(pathname)).isDirectory())
+  );
 }
 
 export type OmitFirst<T extends unknown[]> = T extends [unknown, ...infer R]
