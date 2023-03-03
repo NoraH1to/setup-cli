@@ -3,7 +3,7 @@ import np from 'normalize-path';
 
 import type { Virtual } from './File';
 import type { Required } from 'utility-types';
-import { VError } from 'verror';
+import VError from 'verror';
 
 type DirInfoConstructorOptions = {
   parent?: DirInfo | null;
@@ -38,8 +38,8 @@ export class DirInfo implements Status {
     const { pathname, parent } = options;
 
     this.parent = parent;
-    this.dirname = parent?.pathname;
     this.pathname = pathname;
+    this.dirname = path.dirname(pathname);
     this.name = path.basename(this.pathname);
 
     if (!(this.exist = fs.existsSync(this.pathname))) return;
