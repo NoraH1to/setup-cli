@@ -6,6 +6,8 @@ import { GeneratorSource } from './Source';
 import { Hook, HookHelper } from './Hook';
 import { DirInfo } from './Dir';
 import np from 'normalize-path';
+import { isDir } from './utils';
+import { getConfirm } from './qa';
 
 import type { Ora } from 'ora';
 import type { SourceInfo } from './Source';
@@ -189,13 +191,41 @@ export class Generator<N extends string = string> {
     }
   }
 
-  public async clearTemp() {
-    await fs.rm(this.tempPathname, { recursive: true });
+  private async before() {
+    if (!fs.existsSync(this.target.pathname)) return;
+    let confirm = false;
+    if (isDir(this.target.pathname))
+      if (fs.readdirSync(this.target.pathname).length)
+        confirm = await getConfirm(
+          `The content in folder "${this.target.name}" will be deleted, whether to continue`,
+        );
+      else
+        confirm = await getConfirm(
+          `Existing file "${this.target.name}" will be deleted, whether to continue`,
+        );
+    if (!confirm) process.exit(0);
+    fs.rmSync(this.target.pathname, { recursive: true });
+    fs.ensureDirSync(this.target.pathname);
   }
 
-  private async output() {
-    this.spinner.start('Copy Files');
-    await fs.copy(this.tempPathname, this.target.pathname, { overwrite: true });
+  private async after() {
+    const pkg = this.targetDirInfo.get('/package.json', { type: 'file' });
+    if (pkg?.getJson()) {
+      const pkgJson = pkg.getJson();
+      pkgJson.name = this.target.name;
+      pkg.setContent(JSON.stringify(pkgJson));
+    }
+  }
+
+  private async output(map = this.targetDirInfo.getMap()) {
+    this.spinner.start('Output Files');
+    for (const item of Object.values(map)) {
+      if (item.isDir) this.output(item.getMap());
+      else {
+        fs.ensureFileSync(item.pathname);
+        fs.writeFileSync(item.pathname, (item as FileInfo).getContent());
+      }
+    }
   }
 
   private async installDeps() {
@@ -208,10 +238,19 @@ export class Generator<N extends string = string> {
 
   public async generate() {
     try {
+      await this.before();
+      await this.callHooks('beforeGenerate');
 
       await this.generateBase();
       await this.generateInject();
+      $.verbose = false;
+
+      await this.callHooks('afterGenerate', { targetDir: this.targetDirInfo });
+      await this.after();
+
       await this.output();
+
+      await this.callHooks('afterOutput');
 
       await this.installDeps();
 
@@ -225,8 +264,6 @@ export class Generator<N extends string = string> {
         chalk.redBright(this.spinner.text || 'Something error when generating'),
       );
       console.error(chalk.redBright((e as Error).stack));
-    } finally {
-      await this.clearTemp();
     }
   }
 }

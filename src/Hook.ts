@@ -12,6 +12,7 @@ import VError from 'verror';
 import type { FileInfo } from './File';
 import type { SourceInfo, SOURCE_TYPE } from './Source';
 import type { AsyncOrCommon } from './utils';
+import type { DirInfo } from './Dir';
 
 export type HookHelpers = typeof ex & {
   inquirer: typeof inquirer;
@@ -22,7 +23,22 @@ export type HookHelpers = typeof ex & {
 export interface HookBase<P extends unknown[] = unknown[], R = unknown> {
   (...args: P): AsyncOrCommon<R>;
 }
+
+/**
+ * beforeGenerate -> beforeMerge -> onMerging -> afterMerge -> afterGenerate -> afterOutput
+ */
 export interface Hooks {
+  beforeGenerate?: HookBase;
+  beforeMerge?: HookBase<
+    [
+      options: {
+        srcDir: DirInfo;
+        destDir: DirInfo;
+        src: FileInfo;
+        dest: FileInfo;
+      },
+    ]
+  >;
   onMerging?: HookBase<
     [
       options: {
@@ -32,8 +48,24 @@ export interface Hooks {
     ],
     string
   >;
-  beforeMerge?: HookBase;
-  afterMerge?: HookBase;
+  afterMerge?: HookBase<
+    [
+      options: {
+        srcDir: DirInfo;
+        destDir: DirInfo;
+        src: FileInfo;
+        dest: FileInfo;
+      },
+    ]
+  >;
+  afterGenerate?: HookBase<
+    [
+      options: {
+        targetDir: DirInfo;
+      },
+    ]
+  >;
+  afterOutput?: HookBase;
 }
 
 interface HookConstructorOptions {
@@ -161,7 +193,9 @@ export class HookHelper {
       keys: ['__dir_src__', '__pathname_entry__'],
       onHasNot(_, key) {
         throw new VError(
-          `Base template ${base.name} is missing the "${String(key)}" key in meta`,
+          `Base template ${base.name} is missing the "${String(
+            key,
+          )}" key in meta`,
         );
       },
     });
