@@ -115,7 +115,7 @@ export class DirInfo implements Status {
    * @param pathname `"/path/to/something"`
    */
   public ensure<O extends Required<DirInfoCURDOptions, 'type'>>(
-    name: string,
+    pathname: string,
     options: O,
   ): DirOrFile<O>;
   public ensure<O extends Required<DirInfoCURDOptions, 'type'>>(
