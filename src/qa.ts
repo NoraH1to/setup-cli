@@ -6,6 +6,8 @@ import inquirerCheckboxPlusPrompt from 'inquirer-checkbox-plus-prompt';
 import { getTemplateSource, SourceInfo, REPOSITORY_TYPE } from './Source';
 import { getConfig } from './Config';
 
+import type { Question } from 'inquirer';
+
 inquirer.registerPrompt('autocomplete', inquirerAutocompletePrompt);
 inquirer.registerPrompt('autocomplete-checkbox', inquirerCheckboxPlusPrompt);
 
@@ -22,6 +24,23 @@ export interface CreateOptions {
   base: SourceInfo;
   inject: SourceInfo[];
 }
+
+const createInjectInquirer = (
+  name = 'inject',
+): Question & Record<string, unknown> => ({
+  name,
+  message: 'Select what need inject',
+  type: 'autocomplete-checkbox',
+  searchable: true,
+  highlight: true,
+  source: async (ans, input) => {
+    return filterSourceInfoList(
+      input,
+      (await getTemplateSource()).injectSourceList,
+    );
+  },
+  default: [],
+});
 
 export const getCreateOptions = async (): Promise<CreateOptions> => {
   const answer = await inquirer.prompt<CreateOptions>([
@@ -45,20 +64,7 @@ export const getCreateOptions = async (): Promise<CreateOptions> => {
         return input?.value?.pathname !== null ? true : 'Required';
       },
     },
-    {
-      name: 'inject',
-      message: 'Select what need inject',
-      type: 'autocomplete-checkbox',
-      searchable: true,
-      highlight: true,
-      source: async (ans, input) => {
-        return filterSourceInfoList(
-          input,
-          (await getTemplateSource()).injectSourceList,
-        );
-      },
-      default: [],
-    },
+    createInjectInquirer(),
   ]);
   answer.project = {
     name: answer.project as unknown as string,
@@ -123,6 +129,17 @@ export const getRepoOptions = async (
     },
   ]);
 
+  return answer;
+};
+
+export interface InjectOptions {
+  inject: SourceInfo[];
+}
+
+export const getInjectOptions = async (): Promise<InjectOptions> => {
+  const answer = await inquirer.prompt<InjectOptions>([
+    createInjectInquirer(),
+  ]);
   return answer;
 };
 

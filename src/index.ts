@@ -1,5 +1,6 @@
 import { program, Argument } from 'commander';
 import cmdCreate from './command/create';
+import cmdInject from './command/inject';
 import cmdUpdate from './command/update';
 import cmdRepo, { OPT } from './command/repo';
 import reset from './command/reset';
@@ -30,6 +31,11 @@ program
   .command('create')
   .description('Build your template by combining')
   .action(() => cmdCreate());
+
+program
+  .command('inject')
+  .description('Inject anything into the current project')
+  .action(() => cmdInject());
 
 program
   .command('update')

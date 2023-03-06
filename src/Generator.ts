@@ -22,6 +22,8 @@ export class Generator<N extends string = string> {
   private baseHook: Hook;
   private injectHookMap: Record<N, Hook> = {} as Record<N, Hook>;
 
+  private isInject: boolean;
+
   private spinner: Ora = ora();
 
   /**
@@ -31,8 +33,10 @@ export class Generator<N extends string = string> {
     const { source, target } = options;
     this.source = source;
     this.target = target;
+    this.isInject = !source.baseSource;
     this.targetDirInfo = DirInfo.build({
       pathname: this.target.pathname,
+      exclude: ['**/node_modules'],
     });
   }
 
@@ -49,15 +53,16 @@ export class Generator<N extends string = string> {
     });
 
     // Hook
-    generator.setBaseHook(
-      await Hook.build({
-        source: {
-          pathname: source.getBasePathname(),
-          name: source.getBaseName(),
-        },
-        hookHelper,
-      }),
-    );
+    !generator.isInject &&
+      generator.setBaseHook(
+        await Hook.build({
+          source: {
+            pathname: source.getBasePathname(),
+            name: source.getBaseName(),
+          },
+          hookHelper,
+        }),
+      );
     for (const injectSourceInfo of source.injectSourceList) {
       generator.setInjectHook(
         injectSourceInfo.name,
@@ -147,7 +152,7 @@ export class Generator<N extends string = string> {
     ...args: Parameters<Hooks[N]>
   ) {
     this.spinner.stop();
-    await this.baseHook.callHook(hookName, ...args);
+    await this.baseHook?.callHook(hookName, ...args);
     for (const hook of Object.values<Hook>(this.injectHookMap)) {
       await hook.callHook(hookName, ...args);
     }
@@ -192,7 +197,7 @@ export class Generator<N extends string = string> {
   }
 
   private async before() {
-    if (!fs.existsSync(this.target.pathname)) return;
+    if (!fs.existsSync(this.target.pathname) || this.isInject) return;
     let confirm = false;
     if (isDir(this.target.pathname))
       if (fs.readdirSync(this.target.pathname).length)
@@ -209,6 +214,7 @@ export class Generator<N extends string = string> {
   }
 
   private async after() {
+    if (this.isInject) return;
     const pkg = this.targetDirInfo.get('/package.json', { type: 'file' });
     if (pkg?.getJson()) {
       const pkgJson = pkg.getJson();
@@ -254,11 +260,13 @@ export class Generator<N extends string = string> {
 
       await this.installDeps();
 
-      this.spinner.succeed(
-        `Done, ${chalk.bold.blueBright(
-          `cd ${this.target.name}`,
-        )} then enjoy 🥰`,
-      );
+      this.isInject
+        ? this.spinner.succeed('Done')
+        : this.spinner.succeed(
+            `Done, ${chalk.bold.blueBright(
+              `cd ${this.target.name}`,
+            )} then enjoy 🥰`,
+          );
     } catch (e) {
       this.spinner.fail(
         chalk.redBright(this.spinner.text || 'Something error when generating'),

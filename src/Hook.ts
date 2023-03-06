@@ -177,12 +177,28 @@ export class HookHelper {
     };
   }
 
-  public static async build(options: { target: SourceInfo; base: SourceInfo }) {
+  public static async build(options: {
+    target: SourceInfo;
+    base?: SourceInfo;
+  }) {
     const { target, base } = options;
 
     let meta;
     try {
-      meta = (await Hook.getHookModelByPathname<'base'>(base.pathname))?.meta;
+      if (base)
+        meta = (await Hook.getHookModelByPathname<'base'>(base.pathname))?.meta;
+      else {
+        const g = await globby(
+          normalizePath(path.resolve(target.pathname, './src', './index.*')),
+        );
+        meta = {
+          __dir_src__: './src',
+          __pathname_entry__: path.relative(
+            target.pathname,
+            path.resolve(g[0]),
+          ),
+        };
+      }
     } catch {
       /* empty */
     }

@@ -2,13 +2,14 @@ import { FileInfo, Status } from './File';
 import np from 'normalize-path';
 import { isDir } from './utils';
 import VError from 'verror';
+import { minimatch } from 'minimatch';
 
 import type { Required } from 'utility-types';
-
 
 type DirInfoConstructorOptions = {
   parent?: DirInfo | null;
   pathname: string;
+  exclude?: string[];
 };
 type DirInfoCURDOptions = {
   type?: 'file' | 'dir';
@@ -36,7 +37,7 @@ export class DirInfo implements Status {
    * @deprecated use `DirInfo.build(...)` instead
    */
   constructor(options: DirInfoConstructorOptions) {
-    const { pathname, parent } = options;
+    const { pathname, parent, exclude = [] } = options;
 
     this.parent = parent;
     this.pathname = pathname;
@@ -47,18 +48,24 @@ export class DirInfo implements Status {
 
     // build tree
     const oriDirInfo = fs.readdirSync(this.pathname, { withFileTypes: true });
-    oriDirInfo.forEach((f) => {
-      if (isDir(path.resolve(this.pathname, f.name))) {
-        this.dirMap[f.name] = DirInfo.build({
-          parent: this,
-          pathname: path.join(this.pathname, f.name),
-        });
-      } else
-        this.fileMap[f.name] = FileInfo.build({
-          pathname: path.join(this.pathname, f.name),
-          parent: this,
-        });
-    });
+    oriDirInfo
+      .filter((f) => {
+        const pathname = np(path.join(this.pathname, f.name));
+        return exclude.every((e) => !minimatch(pathname, e));
+      })
+      .forEach((f) => {
+        if (isDir(path.resolve(this.pathname, f.name))) {
+          this.dirMap[f.name] = DirInfo.build({
+            parent: this,
+            pathname: path.join(this.pathname, f.name),
+            exclude,
+          });
+        } else
+          this.fileMap[f.name] = FileInfo.build({
+            pathname: path.join(this.pathname, f.name),
+            parent: this,
+          });
+      });
   }
 
   /**
