@@ -1,4 +1,12 @@
 # Changelog
+## [1.0.0-alpha.9](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.8...v1.0.0-alpha.9) (2023-03-06)
+
+
+### Features
+
+* **command-inject:** add command inject ([e346f34](https://github.com/NoraH1to/setup-cli/commit/e346f34d8bcff4e1eaef2a119d4e9b8662482c33))
+* **hook-on-merging:** add folder information pass parameters ([a429f6f](https://github.com/NoraH1to/setup-cli/commit/a429f6f11ab079bce5bea6eba8bee1790f4d20b2))
+
 ## [1.0.0-alpha.8](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.7...v1.0.0-alpha.8) (2023-03-03)
 
 
