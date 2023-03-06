@@ -6,7 +6,7 @@ import { ensureRepository } from '@/Source';
 import { getConfig } from '@/Config';
 
 const update = async () => {
-  $.verbose = true;
+  $.verbose = false;
   const sp = ora('Update repository').start();
   try {
     for (const repo of Object.values(getConfig().getSource())) {
