@@ -101,6 +101,8 @@ export class Generator<N extends string = string> {
     } else {
       dest.setContent(
         await hook.callHook('onMerging', {
+          srcDir: this.curInjectDirInfo,
+          destDir: this.targetDirInfo,
           src,
           dest,
         }),

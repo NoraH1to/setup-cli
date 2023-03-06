@@ -42,6 +42,8 @@ export interface Hooks {
   onMerging?: HookBase<
     [
       options: {
+        srcDir: DirInfo;
+        destDir: DirInfo;
         src: FileInfo;
         dest: FileInfo;
       },
