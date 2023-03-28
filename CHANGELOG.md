@@ -1,4 +1,11 @@
 # Changelog
+## [1.0.0-alpha.10](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.9...v1.0.0-alpha.10) (2023-03-28)
+
+
+### Bug Fixes
+
+* **file:** type error ([bd27315](https://github.com/NoraH1to/setup-cli/commit/bd27315adeddd2b0e42d993e793685e139cf11fc))
+
 ## [1.0.0-alpha.9](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.8...v1.0.0-alpha.9) (2023-03-06)
 
 
