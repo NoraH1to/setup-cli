@@ -36,7 +36,7 @@ export class Generator<N extends string = string> {
     this.isInject = !source.baseSource;
     this.targetDirInfo = DirInfo.build({
       pathname: this.target.pathname,
-      exclude: ['**/node_modules'],
+      exclude: ['**/node_modules', '**/.git', '**/out', '**/dist'],
     });
   }
 
