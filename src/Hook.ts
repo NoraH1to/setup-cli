@@ -127,11 +127,12 @@ export class Hook {
     ) {
       try {
         module = await Hook.getHookModelByPathname(source.pathname);
-      } catch {
+      } catch (e) {
         console.error(
           chalk.yellow(
             `Fail to load hooks from "${this.name}" at ${source.pathname}`,
           ),
+          chalk.red(e)
         );
         targetHooks = {};
       }
