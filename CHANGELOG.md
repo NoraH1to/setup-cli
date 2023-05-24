@@ -1,4 +1,11 @@
 # Changelog
+## [1.0.0](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.10...v1.0.0) (2023-05-24)
+
+
+### Bug Fixes
+
+* **file:** error when parsing commented json ([edd42f5](https://github.com/NoraH1to/setup-cli/commit/edd42f5f80e6b1590ff37aea0757eeeb80b51b65))
+
 ## [1.0.0-alpha.10](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.9...v1.0.0-alpha.10) (2023-03-28)
 
 
