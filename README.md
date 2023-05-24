@@ -24,10 +24,6 @@
 
 - **Simple**: Custom in simple way.
 
-## 🔨 Todo
-
-- [ ] [default templates](https://github.com/NoraH1to/setup-template) 🚧
-
 ## 🪄 Usage
 
 Install
