@@ -63,11 +63,20 @@ export class FileInfo<J extends JsonObj = JsonObj> implements Status {
 
   private updateJson() {
     try {
-      if (this.ext === '.json') this.jsonObj = JSON.parse(this.content);
+      if (this.ext === '.json')
+        this.jsonObj = JSON.parse(
+          this.content.replace(
+            /\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g,
+            (m, g) => (g ? '' : m),
+          ),
+        );
       else if (this.ext === '.yml') this.jsonObj = YAML.parse(this.content);
     } catch (e) {
       if (this.content !== '')
-        console.error(chalk.redBright((e as Error).stack));
+        throw new VError(
+          `[FileInfo]-[updateJson]-[${this.pathname}]`,
+          chalk.redBright((e as Error).stack),
+        );
     }
   }
 
