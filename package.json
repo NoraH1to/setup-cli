@@ -18,7 +18,7 @@
     "prepare": "ts-patch install -s && git init && pnpm husky install",
     "dev": "pnpm build -w",
     "build": "rollup -c rollup.config.js",
-    "release": "standard-version --prerelease alpha",
+    "release": "standard-version",
     "test": "vitest run --coverage.enabled --coverage.provider=c8 --coverage.reporter=lcov"
   },
   "keywords": [
