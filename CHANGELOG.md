@@ -1,4 +1,12 @@
 # Changelog
+## [1.1.0](https://github.com/NoraH1to/setup-cli/compare/v1.0.0...v1.1.0) (2023-05-26)
+
+
+### Features
+
+* **generator:** automatic formatting of file contents on output ([66fc8db](https://github.com/NoraH1to/setup-cli/commit/66fc8db0edb34ef8b393e446ffab1762703c325f))
+* **hook:** no longer mandatory for meta information ([35e5549](https://github.com/NoraH1to/setup-cli/commit/35e5549acd64bb43e2f9655f288eb5a17b7cfd64))
+
 ## [1.0.0](https://github.com/NoraH1to/setup-cli/compare/v1.0.0-alpha.10...v1.0.0) (2023-05-24)
 
 
