@@ -4,7 +4,6 @@ import VError from 'verror';
 import { DirInfo } from './Dir';
 
 export interface Status {
-  isDir: boolean;
   exist: boolean;
 }
 
@@ -24,6 +23,7 @@ export class FileInfo<J extends JsonObj = JsonObj> implements Status {
   public readonly exist: boolean = false;
   public readonly parent: DirInfo;
   public readonly isDir = false;
+  public hasChange = false;
   protected content: string;
   protected jsonObj: J;
 
@@ -83,6 +83,7 @@ export class FileInfo<J extends JsonObj = JsonObj> implements Status {
   public setContent(content: string) {
     this.content = content;
     this.updateJson();
+    this.hasChange = true;
   }
 
   public getContent() {

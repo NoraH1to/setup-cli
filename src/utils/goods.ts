@@ -10,3 +10,4 @@ export const globby: typeof globbyModule.globby & typeof globbyModule =
   Object.assign(function globby(patterns, options) {
     return globbyModule.globby(patterns, options);
   }, globbyModule);
+export { default as prettier } from 'prettier';

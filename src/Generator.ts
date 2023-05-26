@@ -6,7 +6,7 @@ import { GeneratorSource } from './Source';
 import { Hook, HookHelper } from './Hook';
 import { DirInfo } from './Dir';
 import np from 'normalize-path';
-import { isDir } from './utils';
+import { isDir, isDirInfo } from './utils';
 import { getConfirm } from './qa';
 
 import type { Ora } from 'ora';
@@ -226,10 +226,25 @@ export class Generator<N extends string = string> {
   }
 
   private async output(map = this.targetDirInfo.getMap()) {
+    const prettierConfig = await prettier.resolveConfig(
+      path.join(this.target.pathname),
+    );
     this.spinner.start('Output Files');
     for (const item of Object.values(map)) {
-      if (item.isDir) this.output(item.getMap());
+      if (isDirInfo(item)) this.output(item.getMap());
       else {
+        // format file content
+        if (item.hasChange) {
+          try {
+            const formatted = prettier.format(item.getContent(), {
+              ...prettierConfig,
+              filepath: item.pathname,
+            });
+            formatted && item.setContent(formatted);
+          } catch {
+            // skip
+          }
+        }
         fs.ensureFileSync(item.pathname);
         fs.writeFileSync(item.pathname, (item as FileInfo).getContent());
       }

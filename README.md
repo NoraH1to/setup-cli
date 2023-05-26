@@ -249,7 +249,7 @@ Virtual file tree of target folder.
 
 ### afterOutput
 
-Execute after outputting the virtual file tree to disk.
+Execute after outputting the virtual file tree to disk with formatting.
 
 Usually used to execute some installation scripts, for example you need to customize `eslint` configuration:
 

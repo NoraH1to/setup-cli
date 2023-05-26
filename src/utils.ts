@@ -3,6 +3,8 @@ import '@/utils/helper';
 import { SOURCE_TYPE } from '@/Source';
 import { fileURLToPath } from 'url';
 import { homedir } from 'os';
+import { FileInfo } from './File';
+import { DirInfo } from './Dir';
 
 const __dir_home = homedir();
 const __dir_cache = path.resolve(__dir_home, './.cache/@setup');
@@ -62,6 +64,9 @@ export function isDir(pathname: string) {
     (f.isSymbolicLink() && fs.statSync(fs.readlinkSync(pathname)).isDirectory())
   );
 }
+
+export const isDirInfo = (item: DirInfo | FileInfo): item is DirInfo =>
+  item.isDir;
 
 export type OmitFirst<T extends unknown[]> = T extends [unknown, ...infer R]
   ? R

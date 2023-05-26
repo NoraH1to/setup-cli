@@ -10,6 +10,7 @@ declare global {
   const path: typeof _.path;
   const os: typeof _.os;
   const globby: typeof _.globby;
+  const prettier: typeof _.prettier;
 }
 
 const ex = { $: _$, ..._ };
