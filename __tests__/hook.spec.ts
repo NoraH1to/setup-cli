@@ -73,18 +73,6 @@ describe('Hook helper', () => {
     expect(hookHelper.env.__dir_src__).not.toBeUndefined();
   });
 
-  it('should throw errors when has not meta', async () => {
-    await expect(() =>
-      HookHelper.build({
-        target,
-        base: {
-          name: 'base',
-          pathname: templateSourcePathnameMap['base-has-not-meta'],
-        },
-      }),
-    ).rejects.toThrowError();
-  });
-
   it('should has correct helpers', async () => {
     const hookHelper = await HookHelper.build({
       target,

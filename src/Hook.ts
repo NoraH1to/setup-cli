@@ -84,7 +84,7 @@ interface HookFn {
   (options: { hookHelper: HookHelper }): Partial<Hooks>;
 }
 export type BaseHook = HookFn & {
-  meta: { __dir_src__: string; __pathname_entry__: string };
+  meta: { __dir_src__?: string; __pathname_entry__?: string };
 };
 export type InjectHook = HookFn;
 
@@ -132,7 +132,7 @@ export class Hook {
           chalk.yellow(
             `Fail to load hooks from "${this.name}" at ${source.pathname}`,
           ),
-          chalk.red(e)
+          chalk.red(e),
         );
         targetHooks = {};
       }
@@ -185,40 +185,9 @@ export class HookHelper {
     base?: SourceInfo;
   }) {
     const { target, base } = options;
-
-    let meta;
-    try {
-      if (base)
-        meta = (await Hook.getHookModelByPathname<'base'>(base.pathname))?.meta;
-      else {
-        const g = await globby(
-          normalizePath(path.resolve(target.pathname, './src', './index.*')),
-        );
-        meta = {
-          __dir_src__: './src',
-          __pathname_entry__: path.relative(
-            target.pathname,
-            path.resolve(g[0]),
-          ),
-        };
-      }
-    } catch {
-      /* empty */
-    }
-    if (!meta) throw new VError(`Base template ${base.name} is missing "meta"`);
-
-    hasKeys({
-      target: meta,
-      keys: ['__dir_src__', '__pathname_entry__'],
-      onHasNot(_, key) {
-        throw new VError(
-          `Base template ${base.name} is missing the "${String(
-            key,
-          )}" key in meta`,
-        );
-      },
-    });
-
+    const meta = base
+      ? (await Hook.getHookModelByPathname<'base'>(base.pathname))?.meta
+      : {};
     return new HookHelper({
       target,
       baseMeta: meta,
